@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('oefeningen', function (Blueprint $table) {
+        Schema::create('oefening', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->boolean('enabled')->default(true); // Default true voor enabled
             $table->string('categorie');
             $table->string('onderdeel');
-            $table->enum('leeftijdsgroep', ['15', '16', '17', '18', '19', '20']); // Enum met leeftijdsgroepen
+            $table->json('leeftijdsgroep'); // Enum met leeftijdsgroepen
             $table->integer('duur'); // Correct datatype
             $table->integer('minimum_aantal_spelers');
             $table->text('benodigdheden');

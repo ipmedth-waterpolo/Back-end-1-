@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('beschrijving');
             $table->json('oefeningIDs');
             $table->unsignedBigInteger('userID');
-            $table->foreign('userID')->references('id')->on('user')->onDelete('cascade');
+            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');
             $table->float('ratings', 2, 1)->nullable();
             $table->integer('totale_duur');
         });

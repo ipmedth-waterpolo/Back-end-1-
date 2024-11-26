@@ -17,10 +17,14 @@ return new class extends Migration
             $table->timestamps();
             $table->text('text');
             $table->integer('ratingNumber');
+
+            //User foreignkey
             $table->unsignedBigInteger('userID');
-            $table->foreign('userID')->references('id')->on('user')->onDelete('cascade');
+            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');
+
+            //training foreignkey
             $table->unsignedBigInteger('trainingID');
-            $table->foreign('userID')->references('id')->on('training')->onDelete('cascade');
+            $table->foreign('trainingID')->references('id')->on('training')->onDelete('cascade');
         });
     }
 
