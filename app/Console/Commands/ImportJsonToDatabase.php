@@ -12,6 +12,9 @@ class ImportJsonToDatabase extends Command
 
     public function handle()
     {
+        // Om meer json files toe te voegen aan de database,
+        // de naam van de file hier bij schrijven en toevoegen aan storage/app
+        // vervolgens de command uitvoeren waardoor ze worden toegevoegd: php artisan import:json-to-database
         $jsonFiles = [
             'fysiofabriek.json',
             'waterpoloplanet.json',
