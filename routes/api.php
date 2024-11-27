@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+use App\Http\Controllers\Api\DataController;
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/data', [DataController::class, 'index']); // Fetch data
+    Route::get('/data/{id}', [DataController::class, 'show']); // Fetch specific record
+    Route::post('/data', [DataController::class, 'store']); // Create new record
+    Route::put('/data/{id}', [DataController::class, 'update']); // Update record
+    Route::delete('/data/{id}', [DataController::class, 'destroy']); // Delete record
 });
