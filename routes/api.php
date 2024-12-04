@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\DataController;
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('api')->group(function () {
     Route::get('/data', [DataController::class, 'index']); // Fetch data
     Route::get('/data/{id}', [DataController::class, 'show']); // Fetch specific record
     Route::post('/data', [DataController::class, 'store']); // Create new record
