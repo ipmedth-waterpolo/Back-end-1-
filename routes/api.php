@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\DataController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// User authentication routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-use App\Http\Controllers\Api\DataController;
-
-Route::middleware(['validate_api_key'])->group(function () {
-    Route::get('/data', [DataController::class, 'index']); // Fetch data
-    Route::get('/data/{id}', [DataController::class, 'show']); // Fetch specific record
+// Protected routes for "data" endpoints
+Route::middleware(['validate_api_key', 'auth:sanctum'])->group(function () {
     Route::post('/data', [DataController::class, 'store']); // Create new record
     Route::put('/data/{id}', [DataController::class, 'update']); // Update record
     Route::delete('/data/{id}', [DataController::class, 'destroy']); // Delete record
+});
+
+// Public routes
+Route::middleware(['validate_api_key'])->group(function () {
+    Route::get('/data', [DataController::class, 'index']); // Fetch data
+    Route::get('/data/{id}', [DataController::class, 'show']); // Fetch specific record
 });
