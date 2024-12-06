@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +24,13 @@ class User extends Authenticatable
     ];
 
     /**
+     * Valid roles for the user.
+     *
+     * @var array<string>
+     */
+    public const ROLES = ['lid', 'gast', 'onderhoud', 'trainer', 'admin'];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -43,4 +49,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Define a relationship to oefeningen (if applicable).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function oefeningen()
+    {
+        return $this->hasMany(Oefening::class);
+    }
 }
