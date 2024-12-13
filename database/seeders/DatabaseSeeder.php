@@ -15,11 +15,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
+        // Add admin user
+        User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'role' => 'admin',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('Passw0rd'),
+        ]);
+
+        // Add trainer user
+        User::create([
+            'name' => 'Trainer User',
+            'email' => 'trainer@example.com',
+            'role' => 'trainer',
+            'password' => bcrypt('TrainerPass'),
         ]);
     
 

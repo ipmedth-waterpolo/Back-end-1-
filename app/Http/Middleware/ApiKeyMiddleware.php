@@ -9,14 +9,15 @@ class ApiKeyMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        // Haal de api key uit de header van het verzoek
+        // Haal de sleutel uit de headers
         $apiKey = $request->header('x-api-key');
 
-        // Vergelijk met de waarde die in de .env staat
+        // Vergelijk met een verwachte sleutel (bijvoorbeeld uit .env)
         if ($apiKey !== env('API_KEY')) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized, nuh uh'], 401);
         }
 
+        // Als de sleutel klopt, ga door met het verzoek
         return $next($request);
     }
 }

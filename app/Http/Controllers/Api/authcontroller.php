@@ -16,6 +16,10 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
+        ], [
+            'name.required' => 'De naam is verplicht.',
+            'email.required' => 'Het e-mailadres is verplicht.',
+            'password.required' => 'Het wachtwoord is verplicht.',
         ]);
 
         $user = User::create([
@@ -25,7 +29,10 @@ class AuthController extends Controller
             'role' => 'gast', // Default role
         ]);
 
-        return response()->json(['user' => $user, 'message' => 'User registered successfully'], 201);
+        return response()->json([
+            'user' => $user,
+            'message' => 'Gebruiker succesvol geregistreerd.'
+        ], 201);
     }
 
     public function login(Request $request)
@@ -38,11 +45,19 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (!$user || !Hash::check($validated['password'], $user->password)) {
-            throw ValidationException::withMessages(['email' => ['Invalid credentials']]);
+            throw ValidationException::withMessages([
+                'email' => ['Ongeldige inloggegevens.']
+            ]);
         }
 
+        // Create a new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['token' => $token, 'message' => 'Login successful']);
+        // Return token and role
+        return response()->json([
+            'token' => $token,
+            'role' => $user->role,
+            'message' => 'Inloggen succesvol.'
+        ]);
     }
 }
