@@ -11,11 +11,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -23,40 +18,31 @@ class User extends Authenticatable
         'role',
     ];
 
-    /**
-     * Valid roles for the user.
-     *
-     * @var array<string>
-     */
     public const ROLES = ['lid', 'gast', 'onderhoud', 'trainer', 'admin'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    /**
-     * Define a relationship to oefeningen (if applicable).
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function oefeningen()
+    // Check if the user has a specific role
+    public function hasRole($roles)
     {
-        return $this->hasMany(Oefening::class);
+        if (is_array($roles)) {
+            return in_array($this->role, $roles);
+        }
+
+        return $this->role === $roles;
+    }
+
+    // Method to check if the user is an admin
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
     }
 }

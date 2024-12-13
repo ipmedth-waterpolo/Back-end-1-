@@ -13,8 +13,8 @@ class ValidateApiKey
         $apiKey = $request->header('x-api-key');
 
         // Vergelijk met een verwachte sleutel (bijvoorbeeld uit .env)
-        if ($apiKey !== config('app.api_key')) {
-            return response()->json(['error' => 'Unauthorized'], 401); // Blokkeer toegang
+        if ($apiKey !== env('API_KEY')) {
+            return response()->json(['error' => 'Unauthorized, nuh uh'], 401);
         }
 
         // Als de sleutel klopt, ga door met het verzoek
