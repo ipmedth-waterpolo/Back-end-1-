@@ -2,20 +2,15 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Oefening;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Add admin user
+        // Voeg gebruikers toe
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -23,28 +18,16 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('Passw0rd'),
         ]);
 
-        // Add trainer user
         User::create([
             'name' => 'Trainer User',
             'email' => 'trainer@example.com',
             'role' => 'trainer',
             'password' => bcrypt('TrainerPass'),
         ]);
-    
 
-    Oefening::create([
-        'name' => 'Test Oefening',
-        'categorie' => json_encode(['categorie1']),
-        'onderdeel' => json_encode(['onderdeel1']),
-        'leeftijdsgroep' => json_encode(['O10']),
-        'duur' => 10,
-        'minimum_aantal_spelers' => 2,
-        'benodigdheden' => json_encode(['bal']),
-        'water_nodig' => 1,
-        'omschrijving' => 'Test beschrijving',
-        'source' => 'http://example.com',
-        'afbeeldingen' => json_encode(['url' => 'http://example.com/image.png']),
-    ]);
-
-}
+        // Call your seeders here
+        $this->call([
+            OefeningenSeeder::class,
+        ]);
+    }
 }
