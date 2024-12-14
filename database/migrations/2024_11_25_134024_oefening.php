@@ -28,6 +28,7 @@ return new class extends Migration
             $table->json('afbeeldingen')->nullable(); // JSON-array voor afbeeldingen
             $table->json('videos')->nullable(); // JSON-array voor video's
             $table->integer('rating')->nullable();
+            $table->binary('icon')->nullable(); // For storing the icon as binary data (BLOB)
             $table->timestamps(); // Created_at en updated_at
         });
     }
