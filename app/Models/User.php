@@ -40,9 +40,29 @@ class User extends Authenticatable
         return $this->role === $roles;
     }
 
-    // Method to check if the user is an admin
+    // Check if the user is a specific role
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    public function isOnderhoud()
+    {
+        return $this->role === 'onderhoud';
+    }
+
+    public function isTrainer()
+    {
+        return $this->role === 'trainer';
+    }
+
+    public function isLid()
+    {
+        return $this->role === 'lid';
+    }
+
+    public function isGast()
+    {
+        return $this->role === 'gast';
     }
 }
