@@ -18,8 +18,10 @@
                             <!-- Afbeelding -->
                             <?php
                             // Ensure that we only decode if the field is a string
-                            $afbeeldingen = is_string($oefening->afbeeldingen) ? json_decode($oefening->afbeeldingen) : $oefening->afbeeldingen;
-                            $image_url = isset($afbeeldingen->url) ? $afbeeldingen->url : "https://via.placeholder.com/150";
+                            $afbeeldingen = is_string($oefening->afbeeldingen) ? json_decode($oefening->afbeeldingen, true) : $oefening->afbeeldingen;
+                            $image_url = isset($afbeeldingen['url']) && filter_var($afbeeldingen['url'], FILTER_VALIDATE_URL)
+                                ? $afbeeldingen['url']
+                                : "https://via.placeholder.com/150?text=Geen+afbeelding";
                             ?>
                             <img src="<?= htmlspecialchars($image_url) ?>" class="card-img-top" alt="<?= htmlspecialchars($oefening->name) ?>">
 
