@@ -142,6 +142,8 @@ class AuthController extends Controller
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8|confirmed',
+            'role' => 'sometimes|string|max:255',
+
         ]);
 
         if ($request->has('name')) {
@@ -152,6 +154,9 @@ class AuthController extends Controller
         }
         if ($request->has('password')) {
             $user->password = Hash::make($validated['password']);
+        }
+        if ($request->has('role')) {
+            $user->role = $validated['role'];
         }
 
         $user->save();
