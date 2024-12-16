@@ -34,11 +34,11 @@
                             </div>
                             <div class="card-footer text-muted">
                                 <!-- Extra informatie -->
-                                <small>Leeftijdsgroep: 
+                                <small>Leeftijdsgroep:
                                     <?php
                                     // Check if 'leeftijdsgroep' is already an array or needs decoding
-                                    $leeftijdsgroep = is_array($oefening->leeftijdsgroep) 
-                                        ? $oefening->leeftijdsgroep 
+                                    $leeftijdsgroep = is_array($oefening->leeftijdsgroep)
+                                        ? $oefening->leeftijdsgroep
                                         : json_decode($oefening->leeftijdsgroep, true);
                                     echo htmlspecialchars(implode(', ', $leeftijdsgroep ?? []));
                                     ?>
