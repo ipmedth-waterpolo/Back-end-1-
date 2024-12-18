@@ -14,19 +14,19 @@ class Oefening extends Model
 
     // Define fillable fields to allow mass assignment
     protected $fillable = [
-        'name', 
-        'categorie', 
-        'onderdeel', 
-        'leeftijdsgroep', 
-        'duur', 
-        'minimum_aantal_spelers', 
-        'benodigdheden', 
-        'water_nodig', 
-        'omschrijving', 
+        'name',
+        'categorie',
+        'onderdeel',
+        'leeftijdsgroep',
+        'duur',
+        'minimum_aantal_spelers',
+        'benodigdheden',
+        'water_nodig',
+        'omschrijving',
         'variatie',    // Added variatie since it was in the migration
-        'source', 
-        'afbeeldingen', 
-        'videos', 
+        'source',
+        'afbeeldingen',
+        'videos',
         'rating',      // Included rating for completeness
     ];
 
@@ -35,6 +35,9 @@ class Oefening extends Model
      * This ensures JSON fields are returned as arrays and booleans are handled correctly.
      */
     protected $casts = [
+        'categorie' => 'array',
+        'onderdeel' => 'array',
+        'benodigdheden' => 'array',
         'leeftijdsgroep' => 'array',   // Automatically handle as array
         'afbeeldingen' => 'array',    // Automatically handle as array
         'videos' => 'array',          // Automatically handle as array
