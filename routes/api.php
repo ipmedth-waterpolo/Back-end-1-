@@ -23,6 +23,8 @@ Route::middleware(['validate_api_key'])->group(function () {
 Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
 Route::get('/training', [TrainingController::class, 'index']);
 Route::get('/training/{id}', [TrainingController::class, 'show']);
+Route::put('/training{id}', [TrainingController::class, 'update']);
+Route::delete('/training/{id}', [TrainingController::class, 'delete']);
 
 Route::middleware(['validate_api_key'])->group(function () {
     Route::get('/data', [DataController::class, 'index']);

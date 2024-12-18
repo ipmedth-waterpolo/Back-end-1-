@@ -65,4 +65,18 @@ class TrainingController extends Controller
     ], 200);
 }
 
+    public function update(Request $request, $id)
+    {
+        $Training = Training::findOrFail($id);
+        $Training->update($request->all());
+        return response()->json($Oefening);
+    }
+
+    public function delete($id)
+    {
+        $Training = Training::findOrFail($id);
+        $Training->delete();
+        return response()->json(['message' => 'Record deleted']);
+    }
+
 }
