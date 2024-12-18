@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ophalenOefeningen;
+use App\Http\Controllers\TrainingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +16,8 @@ use App\Http\Controllers\ophalenOefeningen;
 */
 
 Route::get('/', [ophalenOefeningen::class, 'index']);
+Route::get('/training', [TrainingController::class, 'index']);
+Route::get('/training/{id}', [TrainingController::class, 'show'])->name('trainings.show');
+
 
 
