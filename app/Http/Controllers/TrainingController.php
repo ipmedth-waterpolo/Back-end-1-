@@ -12,37 +12,43 @@ class TrainingController extends Controller
     
 
     public function store(Request $request)
-    {
+{
+    
 
-        dd($request->all());
-        // Valideer de inkomende request
-        // $validated = $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'beschrijving' => 'required|string',
-        //     'totale_duur' => 'required|integer|min:1',
-        //     'oefeningen' => 'required|array',
-        //     'oefeningen.*' => 'exists:oefening,id',  // Controleer dat de oefeningen bestaan
-        // ]);
+    $training = Training::create([
+        'name' => $request->input('name'),
+        'beschrijving' => $request->input('beschrijving'),
+        'totale_duur' => $request->input('totale_duur'),
+        'oefeningIDs' => json_encode(explode(',', $request->input('oefeningen'))), // Oefeningen-ID's als JSON opslaan
+        'userID' => 1, // Hardcoded User ID
+        'enabled' => true, // Optioneel, standaard true
+    ]);
 
-        // // Maak een nieuwe training aan
-        // $training = Training::create([
-        //     'name' => $validated['name'],
-        //     'beschrijving' => $validated['beschrijving'],
-        //     'totale_duur' => $validated['totale_duur'],
-        //     'oefening_ids' => json_encode($validated['oefeningen']), // Oefeningen-ID's opslaan als JSON
-        // ]);
+    // Retourneer de aangemaakte training als JSON
+    return response()->json([
+        'success' => true,
+        'message' => 'Training succesvol aangemaakt!',
+        'data' => $training,
+    ], 201);
 
-        // Terugsturen van succesbericht
-        return response()->json([
-            'message' => 'Training succesvol aangemaakt!',
-            'training' => $training,
-        ], 201);
     }
 
     public function index()
     {
     // Haal de eerste training op
-    $training = Training::first();
+    $training = Training::all();
+
+    return response()->json([
+        'success' => true,
+        'data' => $training,
+    ], 200);
+    }
+
+
+    public function show($id)
+{
+    // Haal de specifieke training op
+    $training = Training::findOrFail($id);
 
     // Decodeer de oefeningIDs uit de training
     $oefeningIDs = json_decode($training->oefeningIDs);
@@ -50,21 +56,13 @@ class TrainingController extends Controller
     // Haal de oefeningen op waarvan de IDs overeenkomen met de oefeningIDs
     $oefeningen = Oefening::whereIn('id', $oefeningIDs)->get();
 
-    // Stuur de training en oefeningen naar de view
-    return view('index', compact('training', 'oefeningen'));
-    }
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'training' => $training,
+            'oefeningen' => $oefeningen,
+        ],
+    ], 200);
+}
 
-    public function index2()
-    {
-        // Haal alle trainingen op
-        $trainings = Training::all();
-        return response()->json($trainings);
-    }
-
-    public function show($id)
-    {
-        // Haal een specifieke training op
-        $training = Training::findOrFail($id);
-        return response()->json($training);
-    }
 }

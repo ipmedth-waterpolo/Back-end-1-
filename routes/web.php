@@ -17,5 +17,7 @@ use App\Http\Controllers\TrainingController;
 
 Route::get('/', [ophalenOefeningen::class, 'index']);
 Route::get('/training', [TrainingController::class, 'index']);
+Route::get('/training/{id}', [TrainingController::class, 'show'])->name('trainings.show');
+
 
 

@@ -15,10 +15,14 @@ class Training extends Model
         'name',
         'beschrijving',
         'totale_duur',
-        'oefening_ids',
+        'oefeningIDs',
+        'userID',
+        'enabled',
+        'ratings',
     ];
 
+    // Zorg ervoor dat oefeningIDs automatisch als array worden behandeld
     protected $casts = [
-        'oefening_ids' => 'array',
+        'oefeningIDs' => 'array',
     ];
 }

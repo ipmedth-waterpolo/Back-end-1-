@@ -20,8 +20,8 @@ Route::middleware(['validate_api_key'])->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::post('/training', [TrainingController::class, 'store']);
-Route::get('/training', [TrainingController::class, 'index2']);
+Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
+Route::get('/training', [TrainingController::class, 'index']);
 Route::get('/training/{id}', [TrainingController::class, 'show']);
 
 Route::middleware(['validate_api_key'])->group(function () {
