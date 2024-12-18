@@ -14,7 +14,6 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -39,8 +38,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            // Add Sanctum Middleware for stateful requests
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Routing\Middleware\ThrottleRequests::class, // Fix the ThrottleRequests usage
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -66,8 +66,12 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 
+    /**
+     * Add custom route middleware.
+     */
     protected $routeMiddleware = [
-        'auth:api' => \App\Http\Middleware\ApiKeyMiddleware::class,
-        'validate_api_key' => \App\Http\Middleware\ValidateApiKey::class,
+        'auth:api' => \App\Http\Middleware\ApiKeyMiddleware::class, // Ensure ApiKeyMiddleware exists
+        'validate_api_key' => \App\Http\Middleware\ValidateApiKey::class, // Ensure ValidateApiKey middleware exists
+        'role' => \App\Http\Middleware\RoleMiddleware::class, // Ensure RoleMiddleware exists
     ];
 }

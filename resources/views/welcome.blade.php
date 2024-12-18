@@ -16,15 +16,14 @@
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
                             <!-- Afbeelding -->
-                            <?php if (isset($oefening->afbeeldingen) && isset(json_decode($oefening->afbeeldingen)->url)): ?>
-                                <img src="<?= htmlspecialchars(json_decode($oefening->afbeeldingen)->url) ?>" 
-                                     class="card-img-top" 
-                                     alt="<?= htmlspecialchars($oefening->name) ?>">
-                            <?php else: ?>
-                                <img src="https://via.placeholder.com/150" 
-                                     class="card-img-top" 
-                                     alt="Placeholder">
-                            <?php endif; ?>
+                            <?php
+                            // Ensure that we only decode if the field is a string
+                            $afbeeldingen = is_string($oefening->afbeeldingen) ? json_decode($oefening->afbeeldingen, true) : $oefening->afbeeldingen;
+                            $image_url = isset($afbeeldingen['url']) && filter_var($afbeeldingen['url'], FILTER_VALIDATE_URL)
+                                ? $afbeeldingen['url']
+                                : "https://via.placeholder.com/150?text=Geen+afbeelding";
+                            ?>
+                            <img src="<?= htmlspecialchars($image_url) ?>" class="card-img-top" alt="<?= htmlspecialchars($oefening->name) ?>">
 
                             <div class="card-body">
                                 <!-- Naam en beschrijving -->
@@ -35,7 +34,15 @@
                             </div>
                             <div class="card-footer text-muted">
                                 <!-- Extra informatie -->
-                                <small>Leeftijdsgroep: <?= htmlspecialchars(implode(', ', json_decode($oefening->leeftijdsgroep) ?? [])) ?></small><br>
+                                <small>Leeftijdsgroep: 
+                                    <?php
+                                    // Check if 'leeftijdsgroep' is already an array or needs decoding
+                                    $leeftijdsgroep = is_array($oefening->leeftijdsgroep) 
+                                        ? $oefening->leeftijdsgroep 
+                                        : json_decode($oefening->leeftijdsgroep, true);
+                                    echo htmlspecialchars(implode(', ', $leeftijdsgroep ?? []));
+                                    ?>
+                                </small><br>
                                 <small>Duur: <?= htmlspecialchars($oefening->duur) ?> minuten</small>
                             </div>
                         </div>
