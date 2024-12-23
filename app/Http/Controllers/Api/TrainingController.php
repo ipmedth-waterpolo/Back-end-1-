@@ -13,7 +13,7 @@ class TrainingController extends Controller
 
 
     public function store(Request $request)
-{
+    {
 
 
     $training = Training::create([
