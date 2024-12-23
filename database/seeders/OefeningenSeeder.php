@@ -13,8 +13,8 @@ class OefeningenSeeder extends Seeder
             [
                 'name' => 'allround Warming-up',
                 'enabled' => true,
-                'categorie' => "Warming Up",
-                'onderdeel' => "rekken",
+                'categorie' => json_encode(["Warming Up"]),
+                'onderdeel' => json_encode(["rekken"]),
                 'leeftijdsgroep' => json_encode(["O10", "O12", "O14", "O16", "O18", "volwassenen"]),
                 'duur' => 10,
                 'minimum_aantal_spelers' => 1,
@@ -29,8 +29,8 @@ class OefeningenSeeder extends Seeder
             [
                 'name' => "Wedstrijdje onderduwen",
                 'enabled' => true,
-                'categorie' => "conditie, tactiek",
-                'onderdeel' => "spieren, verdediging",
+                'categorie' => json_encode(["conditie", "tactiek"]),
+                'onderdeel' => json_encode(["spieren", "verdediging"]),
                 'leeftijdsgroep' => json_encode(["O10", "O12", "O14", "O16", "O18"]),
                 'duur' => 5,
                 'minimum_aantal_spelers' => 2,
@@ -45,8 +45,8 @@ class OefeningenSeeder extends Seeder
             [
                 'name' => "Lucht happen en ondertrekken",
                 'enabled' => true,
-                'categorie' => "conditie, tactiek",
-                'onderdeel' => "ademhaling, aanval",
+                'categorie' => json_encode(["conditie", "tactiek"]),
+                'onderdeel' => json_encode(["ademhaling", "aanval"]),
                 'leeftijdsgroep' => json_encode(["O12", "O14", "O16", "O18"]),
                 'duur' => 5,
                 'minimum_aantal_spelers' => 2,
@@ -61,8 +61,8 @@ class OefeningenSeeder extends Seeder
             [
                 'name' => "Hete aardappel",
                 'enabled' => true,
-                'categorie' => "conditie, techniek, tactiek",
-                'onderdeel' => "cardio, gooien-vangen, wedstrijdstress",
+                'categorie' => json_encode(["conditie", "techniek", "tactiek"]),
+                'onderdeel' => json_encode(["cardio", "gooien-vangen", "wedstrijdstress"]),
                 'leeftijdsgroep' => json_encode(["O12", "O14", "O16", "O18"]),
                 'duur' => 10,
                 'minimum_aantal_spelers' => 5,
@@ -77,8 +77,8 @@ class OefeningenSeeder extends Seeder
             [
                 'name' => "Luister naar de hand",
                 'enabled' => true,
-                'categorie' => "theorie, tactiek",
-                'onderdeel' => "regels, handgebaren-scheidsrechter, heads-up",
+                'categorie' => json_encode(["theorie", "tactiek"]),
+                'onderdeel' => json_encode(["regels", "handgebaren-scheidsrechter", "heads-up"]),
                 'leeftijdsgroep' => json_encode(["O08", "O10", "O12", "O14", "O16", "O18"]),
                 'duur' => 5,
                 'minimum_aantal_spelers' => 2,
@@ -94,4 +94,5 @@ class OefeningenSeeder extends Seeder
 
         DB::table('oefening')->insert($oefening);
     }
+
 }

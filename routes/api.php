@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\Api\TrainingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes

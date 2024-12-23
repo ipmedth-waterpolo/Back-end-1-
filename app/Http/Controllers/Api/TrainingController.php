@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Training;
+use App\Http\Controllers\Controller;
 use App\Models\Oefening;
+use App\Models\Training;
 use Illuminate\Http\Request;
 
 class TrainingController extends Controller
 {
 
-    
+
 
     public function store(Request $request)
 {
-    
+
 
     $training = Training::create([
         'name' => $request->input('name'),
@@ -40,7 +41,9 @@ class TrainingController extends Controller
 
     return response()->json([
         'success' => true,
-        'data' => $training,
+        'data' => [
+            'training' => $training,
+        ],
     ], 200);
     }
 
@@ -51,7 +54,7 @@ class TrainingController extends Controller
     $training = Training::findOrFail($id);
 
     // Decodeer de oefeningIDs uit de training
-    $oefeningIDs = json_decode($training->oefeningIDs);
+    $oefeningIDs = $training->oefeningIDs;
 
     // Haal de oefeningen op waarvan de IDs overeenkomen met de oefeningIDs
     $oefeningen = Oefening::whereIn('id', $oefeningIDs)->get();
@@ -69,7 +72,7 @@ class TrainingController extends Controller
     {
         $Training = Training::findOrFail($id);
         $Training->update($request->all());
-        return response()->json($Oefening);
+        return response()->json($Training);
     }
 
     public function delete($id)

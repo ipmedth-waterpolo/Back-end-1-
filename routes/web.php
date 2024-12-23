@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\ophalenOefeningen;
-use App\Http\Controllers\TrainingController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

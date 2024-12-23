@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         // Call your seeders here
         $this->call([
             OefeningenSeeder::class,
+            TrainingSeeder::class,
         ]);
     }
 }
