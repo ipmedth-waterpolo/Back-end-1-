@@ -8,9 +8,55 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
+    // Show the admin login form
+    public function showAdminLoginForm()
+    {
+        return view('admin.login'); // Ensure that this view exists
+    }
+
+    // Admin login (auth for admin panel)
+    public function adminLogin(Request $request)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        // Attempt to find the user by email
+        $user = User::where('email', $validated['email'])->first();
+
+        // If the user doesn't exist or the password doesn't match, throw validation error
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Ongeldige inloggegevens.']
+            ]);
+        }
+
+        // Check if the user has an 'admin' or 'onderhoud' role
+        if (!in_array($user->role, ['admin', 'onderhoud'])) {
+            throw ValidationException::withMessages([
+                'role' => ['Geen toegang voor deze gebruiker.']
+            ]);
+        }
+
+        // Log the user in
+        Auth::login($user);
+
+        // Create a new token for authentication
+        $token = $user->createToken('admin_auth_token')->plainTextToken;
+
+        // Store the token in the session (you can also store it in cookies or another storage)
+        session(['admin_token' => $token]);
+
+        // Redirect to the admin dashboard with success message
+        return Redirect::route('admin.dashboard')->with('message', 'Inloggen succesvol.');
+    }
+
     // Register a new user
     public function register(Request $request)
     {
@@ -143,7 +189,6 @@ class AuthController extends Controller
             'email' => 'sometimes|string|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8|confirmed',
             'role' => 'sometimes|string|max:255',
-
         ]);
 
         if ($request->has('name')) {
