@@ -13,13 +13,6 @@
 
     <h1>Create New User</h1>
 
-    <!-- Display Flash Messages -->
-    @if (session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @elseif(session('error'))
-        <p style="color: red;">{{ session('error') }}</p>
-    @endif
-
     <!-- Display Validation Errors -->
     @if ($errors->any())
         <div style="color: red;">
@@ -52,7 +45,13 @@
         <br>
 
         <label for="role">Role:</label>
-        <input type="text" id="role" name="role" value="{{ old('role') }}" required>
+        <select id="role" name="role" required>
+            @foreach (\App\Models\User::ROLES as $role)
+                <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+                    {{ ucfirst($role) }}
+                </option>
+            @endforeach
+        </select>
         <br>
 
         <button type="submit">Create User</button>

@@ -6,22 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Oefening;
 use App\Models\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingController extends Controller
 {
-
-
-
     public function store(Request $request)
     {
-
 
     $training = Training::create([
         'name' => $request->input('name'),
         'beschrijving' => $request->input('beschrijving'),
         'totale_duur' => $request->input('totale_duur'),
         'oefeningIDs' => json_encode(explode(',', $request->input('oefeningen'))), // Oefeningen-ID's als JSON opslaan
-        'userID' => 1, // Hardcoded User ID
+        'userID' => Auth::id(),
         'enabled' => true, // Optioneel, standaard true
     ]);
 

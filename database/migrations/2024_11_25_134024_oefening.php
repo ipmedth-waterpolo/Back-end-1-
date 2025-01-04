@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('leeftijdsgroep'); // Voor JSON-velden
             $table->integer('duur');
             $table->integer('minimum_aantal_spelers');
-            $table->text('benodigdheden');
+            $table->text('benodigdheden')->nullable();
             $table->boolean('water_nodig')->default(false);
             $table->text('omschrijving');
             $table->text('variatie')->nullable();
