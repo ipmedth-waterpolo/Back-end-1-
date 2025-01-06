@@ -25,4 +25,17 @@ class Training extends Model
     protected $casts = [
         'oefeningIDs' => 'array',
     ];
+
+    public function reviews()
+{
+    return $this->hasMany(Rating::class, 'trainingID');
+}
+
+public function averageRating()
+{
+    return round($this->reviews()->avg('ratingNumber'), 1);
+}
+
+
+
 }
