@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Oefening;
 use App\Models\Training;
+use App\Models\Oefening;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,13 @@ class TrainingController extends Controller
 
     public function store(Request $request)
 {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'beschrijving' => 'nullable|string',
+        'totale_duur' => 'required|integer',
+        'oefeningen' => 'nullable|string', // Input komt binnen als 'oefeningen'
+        'enabled' => 'nullable|boolean',
+    ]);
     $request->validate([
         'name' => 'required|string|max:255',
         'beschrijving' => 'nullable|string',
@@ -88,6 +96,33 @@ class TrainingController extends Controller
         $Training->delete();
         return response()->json(['message' => 'Record deleted']);
     }
+
+    public function addRating(Request $request, $trainingID)
+{
+    // Valideer de input
+    $request->validate([
+        'ratingNumber' => 'required|integer|min:1|max:5',
+    ]);
+
+    // Controleer of de training bestaat
+    $training = Training::findOrFail($trainingID);
+
+
+    // Sla de rating op
+    $rating = Rating::create([
+        'ratingNumber' => $request->input('ratingNumber'),
+        'userID' => auth()->id(), // Huidige gebruiker
+        'trainingID' => $trainingID,
+    ]);
+
+
+    return response()->json([
+        'success' => true,
+        'data' => $rating,
+    ], 200);
+}
+
+
 
     public function addRating(Request $request, $trainingID)
 {
