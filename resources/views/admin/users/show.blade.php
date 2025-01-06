@@ -32,31 +32,41 @@
     @endif
 
     <!-- User Creation Form -->
-    <form action="{{ route('admin.users.store') }}" method="POST">
-        @csrf
+    <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store') }}" method="POST">
+    @csrf
+    @if(isset($user))
+        @method('PUT') <!-- This is for the update method -->
+    @endif
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ old('name') }}" required>
-        <br>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="{{ old('name', $user->name ?? '') }}" required>
+    <br>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="{{ old('email') }}" required>
-        <br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
+    <br>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" {{ isset($user) ? '' : 'required' }}>
+    <br>
 
-        <label for="password_confirmation">Confirm Password:</label>
-        <input type="password" id="password_confirmation" name="password_confirmation" required>
-        <br>
+    <label for="password_confirmation">Confirm Password:</label>
+    <input type="password" id="password_confirmation" name="password_confirmation" {{ isset($user) ? '' : 'required' }}>
+    <br>
 
-        <label for="role">Role:</label>
-        <input type="text" id="role" name="role" value="{{ old('role') }}" required>
-        <br>
+    <label for="role">Role:</label>
+    <select id="role" name="role" required>
+        @foreach (\App\Models\User::ROLES as $role)
+            <option value="{{ $role }}" {{ old('role', $user->role ?? '') == $role ? 'selected' : '' }}>
+                {{ ucfirst($role) }}
+            </option>
+        @endforeach
+    </select>
+    <br>
 
-        <button type="submit">Create User</button>
-    </form>
+    <button type="submit">{{ isset($user) ? 'Update User' : 'Create User' }}</button>
+</form>
+
 
     <p><a href="{{ route('admin.users') }}">Back to User List</a></p>
 </body>
