@@ -19,5 +19,8 @@ Route::get('/', [ophalenOefeningen::class, 'index']);
 Route::get('/training', [TrainingController::class, 'index']);
 Route::get('/training/{id}', [TrainingController::class, 'show'])->name('trainings.show');
 
+Route::post('/training/{id}/rating', [TrainingController::class, 'addRating'])->name('ratings.store');
+
+
 
 
