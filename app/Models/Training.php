@@ -23,7 +23,7 @@ class Training extends Model
 
     // Zorg ervoor dat oefeningIDs automatisch als array worden behandeld
     protected $casts = [
-        'oefeningIDs' => 'array', // Hierdoor wordt JSON automatisch omgezet naar een array
+        'oefeningIDs' => 'string', // Hierdoor wordt JSON automatisch omgezet naar een array
     ];
 
     public function reviews()
