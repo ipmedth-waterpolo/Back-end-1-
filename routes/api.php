@@ -26,6 +26,8 @@ Route::get('/training/{id}', [TrainingController::class, 'show']);
 Route::put('/training{id}', [TrainingController::class, 'update']);
 Route::delete('/training/{id}', [TrainingController::class, 'delete']);
 
+Route::post('/training/{id}/rating', [TrainingController::class, 'addRating']);
+
 Route::middleware(['validate_api_key'])->group(function () {
     Route::get('/data', [DataController::class, 'index']);
     Route::get('/data/{id}', [DataController::class, 'show']);
@@ -73,4 +75,5 @@ Route::middleware(['validate_api_key', 'auth:sanctum', 'role:onderhoud,admin'])-
     // Get all users' information (Admins and Onderhoud)
     Route::get('/users', [AuthController::class, 'getAllUsersInfo']);
 });
+
 

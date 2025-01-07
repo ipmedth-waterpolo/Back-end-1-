@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('rating_review', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
             $table->timestamps();
-            $table->text('text');
             $table->integer('ratingNumber');
 
             //User foreignkey
