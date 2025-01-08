@@ -9,8 +9,10 @@ class Oefening extends Model
 {
     use HasFactory;
 
+    // Specify the table associated with the model
     protected $table = 'oefening';
 
+    // Define fillable fields to allow mass assignment
     protected $fillable = [
         'name',
         'categorie',
@@ -21,29 +23,31 @@ class Oefening extends Model
         'benodigdheden',
         'water_nodig',
         'omschrijving',
-        'variatie',
+        'variatie',    // Added variatie since it was in the migration
         'source',
         'afbeeldingen',
         'videos',
-        'rating',
+        'rating',      // Included rating for completeness
     ];
 
+    /**
+     * Automatically cast fields to specific data types.
+     * This ensures JSON fields are returned as arrays and booleans are handled correctly.
+     */
     protected $casts = [
         'categorie' => 'array',
         'onderdeel' => 'array',
         'benodigdheden' => 'array',
-        'leeftijdsgroep' => 'array',
-        'afbeeldingen' => 'array',
-        'videos' => 'array',
-        'water_nodig' => 'boolean',
-        'enabled' => 'boolean',
-        'rating' => 'integer',
+        'leeftijdsgroep' => 'array',   // Automatically handle as array
+        'afbeeldingen' => 'array',    // Automatically handle as array
+        'videos' => 'array',          // Automatically handle as array
+        'water_nodig' => 'boolean',   // Ensure boolean handling
+        'enabled' => 'boolean',       // Enabled field cast to boolean if needed
+        'rating' => 'integer',        // Ensure rating is an integer
     ];
 
-    // Many-to-many relationship with Training
-    public function trainings()
-    {
-        return $this->belongsToMany(Training::class, 'oefening_training', 'oefening_id', 'training_id')
-                    ->withTimestamps();
-    }
+    /**
+     * Additional methods or relationships can be added here as needed.
+     * For example, you can define scopes or custom accessors/mutators.
+     */
 }
