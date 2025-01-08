@@ -26,6 +26,7 @@ class Oefening extends Model
         'afbeeldingen',
         'videos',
         'rating',
+        'icon',
     ];
 
     protected $casts = [

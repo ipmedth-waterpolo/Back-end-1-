@@ -78,6 +78,11 @@
         @error('name') <span style="color: red;">{{ $message }}</span> @enderror
         <br><br>
 
+        <!-- Enabled -->
+        <label for="enabled"><strong>Enabled:</strong></label>
+        <input type="checkbox" id="enabled" name="enabled" {{ old('enabled') ? 'checked' : '' }}>
+        <br><br>
+
         <!-- Categorie -->
         <label><strong>Categorie:</strong></label>
         <div id="category_container">
@@ -169,6 +174,26 @@
         <!-- Variatie -->
         <label for="variatie"><strong>Variatie:</strong></label>
         <textarea id="variatie" name="variatie" rows="3">{{ old('variatie') }}</textarea>
+        <br><br>
+
+        <!-- Icon -->
+        <label for="icon"><strong>Icon (Upload or URL):</strong></label>
+        <input type="text" id="icon" name="icon" placeholder="Enter icon URL or upload below" value="{{ old('icon') }}">
+        <br><br>
+        <input type="file" id="icon_upload" name="icon_upload" accept="image/*">
+        @error('icon') <span style="color: red;">{{ $message }}</span> @enderror
+        <br><br>
+
+        <!-- Afbeeldingen -->
+        <label for="afbeeldingen"><strong>Afbeeldingen:</strong></label>
+        <textarea id="afbeeldingen" name="afbeeldingen" rows="3">{{ old('afbeeldingen') }}</textarea>
+        @error('afbeeldingen') <span style="color: red;">{{ $message }}</span> @enderror
+        <br><br>
+
+        <!-- Videos -->
+        <label for="videos"><strong>Videos:</strong></label>
+        <textarea id="videos" name="videos" rows="3">{{ old('videos') }}</textarea>
+        @error('videos') <span style="color: red;">{{ $message }}</span> @enderror
         <br><br>
 
         <!-- Source -->

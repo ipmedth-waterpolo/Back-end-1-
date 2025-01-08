@@ -27,6 +27,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Icon</th>
                 <th>Name</th>
                 <th>Categorie</th>
                 <th>Duur</th>
@@ -37,6 +38,22 @@
             @foreach ($exercises as $exercise)
                 <tr>
                     <td>{{ $exercise->id }}</td>
+
+<!-- Icon Column -->
+<td>
+    @if ($exercise->icon)
+        @if (filter_var($exercise->icon, FILTER_VALIDATE_URL))
+            <!-- If the icon is a URL (like FontAwesome icon) -->
+            <img src="{{ $exercise->icon }}" alt="Icon" style="width: 50px; height: 50px;">
+        @else
+            <!-- If the icon is a base64-encoded image -->
+            <img src="data:image/png;base64,{{ base64_encode(Storage::disk('public')->get($exercise->icon)) }}" alt="Icon" style="width: 50px; height: 50px;">
+        @endif
+    @else
+        No Icon
+    @endif
+</td>
+
                     <td><a href="{{ route('admin.exercises.show', $exercise->id) }}">{{ $exercise->name }}</a></td>
                     <td>
                         @if (is_array($exercise->categorie))

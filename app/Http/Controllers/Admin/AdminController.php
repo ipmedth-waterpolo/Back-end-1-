@@ -8,6 +8,7 @@ use App\Models\Training;
 use App\Models\Oefening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -108,31 +109,34 @@ class AdminController extends Controller
             'categorie' => 'required|array',
             'onderdeel' => 'required|array',
             'leeftijdsgroep' => 'required|array',
-            'duur' => 'required|integer|min:1', // Minimum 1 minute for duration
-            'minimum_aantal_spelers' => 'required|integer|min:1', // Minimum 1 player
-            'benodigdheden' => 'nullable|array', // Changed to nullable if it's optional
-            'water_nodig' => 'nullable|boolean', // Changed to nullable
+            'duur' => 'required|integer|min:1',
+            'minimum_aantal_spelers' => 'required|integer|min:1',
+            'benodigdheden' => 'nullable|array',
+            'water_nodig' => 'nullable|boolean',
             'omschrijving' => 'required|string',
             'variatie' => 'nullable|string',
             'source' => 'nullable|string',
-            'afbeeldingen' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
-            'videos' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
+            'afbeeldingen' => 'nullable|string',
+            'videos' => 'nullable|string',
             'rating' => 'nullable|integer|min:1|max:5',
+            'icon' => 'nullable|string',
+            'icon_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
     
-        // Create the exercise
+        if ($request->hasFile('icon_upload')) {
+            $iconPath = $request->file('icon_upload')->store('icons', 'public');
+            $validated['icon'] = $iconPath;
+        }
+    
         Oefening::create($validated);
     
-        // Redirect with success message
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully created.');
-    }
-    
+    }    
 
     public function updateExercise(Request $request, $id)
     {
         $exercise = Oefening::findOrFail($id);
     
-        // Ensure 'benodigdheden' and 'videos' are arrays before validation
         if (is_string($request->benodigdheden)) {
             $request->merge(['benodigdheden' => explode(', ', $request->benodigdheden)]);
         }
@@ -140,7 +144,6 @@ class AdminController extends Controller
             $request->merge(['videos' => explode(', ', $request->videos)]);
         }
     
-        // Validate the incoming data
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'categorie' => 'sometimes|array',
@@ -148,21 +151,32 @@ class AdminController extends Controller
             'leeftijdsgroep' => 'sometimes|array',
             'duur' => 'sometimes|integer',
             'minimum_aantal_spelers' => 'sometimes|integer',
-            'benodigdheden' => 'sometimes|array', // Now this will be treated as an array
+            'benodigdheden' => 'sometimes|array',
             'water_nodig' => 'sometimes|boolean',
             'omschrijving' => 'sometimes|string',
             'variatie' => 'nullable|string',
             'source' => 'nullable|string',
             'afbeeldingen' => 'nullable|array',
-            'videos' => 'sometimes|array', // Now this will be treated as an array
+            'videos' => 'sometimes|array',
             'rating' => 'nullable|integer|min:1|max:5',
+            'icon' => 'nullable|string',
+            'icon_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
     
-        // Update the exercise
+        if ($request->hasFile('icon_upload')) {
+            $iconPath = $request->file('icon_upload')->store('icons', 'public');
+            $validated['icon'] = $iconPath;
+    
+            // Optionally delete the old icon if it exists
+            if ($exercise->icon && Storage::disk('public')->exists($exercise->icon)) {
+                Storage::disk('public')->delete($exercise->icon);
+            }
+        }
+    
         $exercise->update($validated);
     
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully updated.');
-    }
+    }        
 
     public function deleteExercise($id)
     {

@@ -176,6 +176,21 @@
         <input type="text" id="source" name="source" value="{{ $exercise->source }}">
         <br><br>
 
+        <!-- Icon -->
+<label for="icon"><strong>Icon (Current or Update):</strong></label>
+<p>Current Icon: 
+    @if (!empty($exercise->icon))
+        <img src="{{ $exercise->icon }}" alt="Current Icon" style="height: 50px; width: 50px;">
+    @else
+        No icon set.
+    @endif
+</p>
+<input type="text" id="icon" name="icon" placeholder="Enter icon URL or upload below" value="{{ $exercise->icon }}">
+<br><br>
+<input type="file" id="icon_upload" name="icon_upload" accept="image/*">
+<br><br>
+
+
         <!-- Afbeeldingen -->
         <label for="afbeeldingen"><strong>Afbeeldingen:</strong></label>
         <textarea id="afbeeldingen" name="afbeeldingen" rows="3">{{ is_array($exercise->afbeeldingen) ? implode(', ', $exercise->afbeeldingen) : $exercise->afbeeldingen }}</textarea>
