@@ -20,12 +20,6 @@ Route::middleware(['validate_api_key'])->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-// Middleware group for routes that require API key validation, authentication, and specific roles for trainings
-Route::middleware(['validate_api_key', 'auth:sanctum', 'role:trainer,onderhoud,admin'])->group(function () {
-    Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
-    Route::put('/training{id}', [TrainingController::class, 'update']);
-    Route::delete('/training/{id}', [TrainingController::class, 'delete']);
-});
 Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
 Route::get('/training', [TrainingController::class, 'index']);
 Route::get('/training/{id}', [TrainingController::class, 'show']);
@@ -34,12 +28,9 @@ Route::delete('/training/{id}', [TrainingController::class, 'delete']);
 
 Route::post('/training/{id}/rating', [TrainingController::class, 'addRating']);
 
-// Middleware group for routes that only require API key validation
 Route::middleware(['validate_api_key'])->group(function () {
     Route::get('/data', [DataController::class, 'index']);
     Route::get('/data/{id}', [DataController::class, 'show']);
-    Route::get('/training', [TrainingController::class, 'index']);
-    Route::get('/training/{id}', [TrainingController::class, 'show']);
 });
 
 // Authenticated routes - Trainer, Onderhoud, Admin

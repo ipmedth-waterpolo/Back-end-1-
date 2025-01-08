@@ -35,16 +35,4 @@ class Training extends Model
     {
         return round($this->reviews()->avg('ratingNumber'), 1);
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'userID');
-    }
-
-    public function oefeningen()
-    {
-        // Return related exercises using the 'oefeningIDs' field
-        return $this->belongsToMany(Oefening::class, 'oefening_training', 'training_id', 'oefening_id')
-                    ->withTimestamps();
-    }
 }
