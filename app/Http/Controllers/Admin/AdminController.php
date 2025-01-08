@@ -97,7 +97,8 @@ class AdminController extends Controller
 
     public function createExercise()
     {
-        return view('admin.exercises.create');
+        $exercises = Oefening::all();
+        return view('admin.exercises.create', ['exercises' => $exercises]);
     }
 
     public function storeExercise(Request $request)
@@ -107,22 +108,25 @@ class AdminController extends Controller
             'categorie' => 'required|array',
             'onderdeel' => 'required|array',
             'leeftijdsgroep' => 'required|array',
-            'duur' => 'required|integer',
-            'minimum_aantal_spelers' => 'required|integer',
-            'benodigdheden' => 'required|array',
-            'water_nodig' => 'required|boolean',
+            'duur' => 'required|integer|min:1', // Minimum 1 minute for duration
+            'minimum_aantal_spelers' => 'required|integer|min:1', // Minimum 1 player
+            'benodigdheden' => 'nullable|array', // Changed to nullable if it's optional
+            'water_nodig' => 'nullable|boolean', // Changed to nullable
             'omschrijving' => 'required|string',
             'variatie' => 'nullable|string',
             'source' => 'nullable|string',
-            'afbeeldingen' => 'nullable|array',
-            'videos' => 'nullable|array',
+            'afbeeldingen' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
+            'videos' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
             'rating' => 'nullable|integer|min:1|max:5',
         ]);
-
+    
+        // Create the exercise
         Oefening::create($validated);
-
+    
+        // Redirect with success message
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully created.');
     }
+    
 
     public function updateExercise(Request $request, $id)
     {
@@ -220,10 +224,10 @@ class AdminController extends Controller
             'oefeningIDs.*' => 'exists:oefening,id',
         ]);
 
-// If 'enabled' is not set, set it to false
-if (!array_key_exists('enabled', $validated)) {
-    $validated['enabled'] = false;
-}
+        // If 'enabled' is not set, set it to false
+        if (!array_key_exists('enabled', $validated)) {
+            $validated['enabled'] = false;
+        }
     
         // Find the training
         $training = Training::findOrFail($id);
@@ -235,6 +239,7 @@ if (!array_key_exists('enabled', $validated)) {
             'totale_duur' => $validated['totale_duur'],
             'enabled' => $validated['enabled'],
             'ratings' => $validated['ratings'],
+            'oefeningIDs' => $validated['oefeningIDs'],
         ]);
     
         // Sync the associated exercises (oefeningen)
@@ -251,28 +256,31 @@ if (!array_key_exists('enabled', $validated)) {
         // Get all exercises for the dropdown
         $exercises = Oefening::all();
         return view('admin.trainings.create', compact('exercises'));
-    }
+    }    
 
     public function storeTraining(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'beschrijving' => 'required|string',
-            'totale_duur' => 'required|integer',
+            'totale_duur' => 'required|integer|min:1',
             'oefeningIDs' => 'required|array',
+            'enabled' => 'nullable|boolean',
+            'ratings' => 'nullable|numeric|min:0|max:5',
         ]);
-
+    
         Training::create([
             'name' => $validated['name'],
             'beschrijving' => $validated['beschrijving'],
             'totale_duur' => $validated['totale_duur'],
             'oefeningIDs' => json_encode($validated['oefeningIDs']),
             'userID' => Auth::id(),
-            'enabled' => true,
+            'enabled' => $request->has('enabled') ? $validated['enabled'] : false,
+            'ratings' => $validated['ratings'] ?? null,
         ]);
-
+    
         return redirect()->route('admin.trainings')->with('success', 'Training successfully created.');
-    }
+    }    
 
     public function deleteTraining($id)
     {
