@@ -7,6 +7,7 @@ use App\Models\Oefening;
 use App\Models\Training;
 use App\Models\Rating;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingController extends Controller
 {
