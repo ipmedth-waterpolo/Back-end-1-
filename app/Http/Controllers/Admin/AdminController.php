@@ -181,20 +181,23 @@ class AdminController extends Controller
 
     public function showTraining($id)
     {
-        // Fetch the training along with the user who created it
+        // Haal de training op inclusief de gebruiker die deze heeft aangemaakt
         $training = Training::with('user')->findOrFail($id);
     
-        // Check if 'oefeningIDs' is a string, and decode it if needed
-        $oefeningIDs = is_string($training->oefeningIDs) ? json_decode($training->oefeningIDs) : $training->oefeningIDs;
+        // Zorg ervoor dat oefeningIDs wordt omgezet naar een array
+        // Dit splitst de string op komma's en maakt er een array van
+        $oefeningIDs = explode(',', $training->oefeningIDs);
     
-        // Fetch exercises associated with this training
+        // Fetch oefeningen die gekoppeld zijn aan deze training
+        // We gebruiken whereIn om de oefeningen op te halen op basis van de array van oefeningIDs
         $oefeningen = Oefening::whereIn('id', $oefeningIDs)->get();
     
+        // Geef de training en oefeningen door naar de view
         return view('admin.trainings.show', [
             'training' => $training,
             'oefeningen' => $oefeningen,
         ]);
-    }
+    }    
 
     public function showTrainingEdit($id)
     {
@@ -212,21 +215,25 @@ class AdminController extends Controller
 
     public function updateTraining(Request $request, $id)
     {
-
-        // Ensure 'enabled' is either true or false.
+        // Valideer de input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'beschrijving' => 'required|string',
-            'totale_duur' => 'required|integer|min:0',
-            'enabled' => 'nullable|boolean',  // 'nullable' allows the field to be null, 'boolean' ensures it's true or false
+            'totale_duur' => 'required|numeric',
+            'enabled' => 'nullable|boolean', // 'nullable' allows the field to be null, 'boolean' ensures it's true or false
             'ratings' => 'nullable|numeric|min:0|max:5',
             'oefeningIDs' => 'array|nullable',
             'oefeningIDs.*' => 'exists:oefening,id',
         ]);
-
+    
         // If 'enabled' is not set, set it to false
         if (!array_key_exists('enabled', $validated)) {
             $validated['enabled'] = false;
+        }
+    
+        // Convert the 'oefeningIDs' array to a comma-separated string (if it's not null)
+        if (isset($validated['oefeningIDs'])) {
+            $validated['oefeningIDs'] = implode(',', $validated['oefeningIDs']);
         }
     
         // Find the training
@@ -239,17 +246,13 @@ class AdminController extends Controller
             'totale_duur' => $validated['totale_duur'],
             'enabled' => $validated['enabled'],
             'ratings' => $validated['ratings'],
-            'oefeningIDs' => $validated['oefeningIDs'],
+            'oefeningIDs' => $validated['oefeningIDs'], // Store the comma-separated string in 'oefeningIDs'
         ]);
-    
-        // Sync the associated exercises (oefeningen)
-        //if ($request->has('oefeningIDs')) {
-        //    $training->oefening()->sync($validated['oefeningIDs']);
-        //}
     
         // Redirect to the overview page (training list)
         return redirect()->route('admin.trainings')->with('success', 'Training updated successfully!');
-    }    
+    }
+     
 
     public function createTraining()
     {

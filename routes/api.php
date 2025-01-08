@@ -26,11 +26,11 @@ Route::middleware(['validate_api_key', 'auth:sanctum', 'role:trainer,onderhoud,a
     Route::put('/training{id}', [TrainingController::class, 'update']);
     Route::delete('/training/{id}', [TrainingController::class, 'delete']);
 });
-Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
+//Route::post('/trainings', [TrainingController::class, 'store'])->name('trainings.store');;
 Route::get('/training', [TrainingController::class, 'index']);
 Route::get('/training/{id}', [TrainingController::class, 'show']);
-Route::put('/training{id}', [TrainingController::class, 'update']);
-Route::delete('/training/{id}', [TrainingController::class, 'delete']);
+//Route::put('/training{id}', [TrainingController::class, 'update']);
+//Route::delete('/training/{id}', [TrainingController::class, 'delete']);
 
 Route::post('/training/{id}/rating', [TrainingController::class, 'addRating']);
 
