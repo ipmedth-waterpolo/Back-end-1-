@@ -13,6 +13,7 @@
 
     <h1>Exercises</h1>
     <a href="{{ route('admin.exercises.create') }}">+ Add New Exercise</a>
+    <br>
 
     <!-- Display Flash Messages -->
     @if (session('success'))

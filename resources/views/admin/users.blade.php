@@ -42,7 +42,6 @@
                     <td>{{ $user->role }}</td>
                     <td>
                         <a href="{{ route('admin.users.show', $user->id) }}">View</a> |
-                        <a href="{{ route('admin.users.edit', $user->id) }}">Edit</a> |
                         <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')

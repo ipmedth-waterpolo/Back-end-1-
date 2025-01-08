@@ -2,13 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Exercise</title>
+    <title>Show Exercise</title>
+    <script>
+        function addNewCategory() {
+            var newCategoryInput = document.getElementById('new_category');
+            var newCategoryValue = newCategoryInput.value.trim();
+
+            if (newCategoryValue !== '') {
+                var categoryContainer = document.getElementById('category_container');
+
+                var label = document.createElement('label');
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'categorie[]';
+                checkbox.value = newCategoryValue;
+                checkbox.checked = true;
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(' ' + newCategoryValue));
+
+                categoryContainer.appendChild(label);
+                categoryContainer.appendChild(document.createElement('br'));
+
+                newCategoryInput.value = '';
+            }
+        }
+
+        function addNewOnderdeel() {
+            var newOnderdeelInput = document.getElementById('new_onderdeel');
+            var newOnderdeelValue = newOnderdeelInput.value.trim();
+
+            if (newOnderdeelValue !== '') {
+                var onderdeelContainer = document.getElementById('onderdeel_container');
+
+                var label = document.createElement('label');
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'onderdeel[]';
+                checkbox.value = newOnderdeelValue;
+                checkbox.checked = true;
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(' ' + newOnderdeelValue));
+
+                onderdeelContainer.appendChild(label);
+                onderdeelContainer.appendChild(document.createElement('br'));
+
+                newOnderdeelInput.value = '';
+            }
+        }
+    </script>
 </head>
 <body>
     <!-- Back Button -->
     <p>
         <button onclick="window.location='{{ url()->previous() }}'">Back</button>
     </p>
+
+    @if ($errors->any())
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+    @endif
 
     <h1>Edit Exercise: {{ $exercise->name }}</h1>
 
@@ -27,72 +84,43 @@
         <input type="checkbox" id="enabled" name="enabled" {{ $exercise->enabled ? 'checked' : '' }}>
         <br><br>
 
-    <!-- Categorie -->
-	<label for="categorie"><strong>Categorie:</strong></label>
-	<select id="categorie" name="categorie" onchange="toggleCustomCategoryInput()">
-		@php
-			$categories = collect($exercises)->pluck('categorie')->unique()->filter()->toArray();
-		@endphp
-		@foreach ($categories as $category)
-			<option value="{{ $category }}" {{ $exercise->categorie == $category ? 'selected' : '' }}>
-				{{ $category }}
-			</option>
-		@endforeach
-		<option value="custom" {{ $exercise->categorie == 'custom' ? 'selected' : '' }}>Other...</option>
-	</select>
-	<br><br>
-	<input type="text" id="custom_categorie" name="custom_categorie" placeholder="Custom Category" style="display: none;">
-	<br><br>
+        <!-- Categorie -->
+        <label><strong>Categorie:</strong></label>
+        <div id="category_container">
+            @php
+                $categories = collect($exercises)->pluck('categorie')->flatten()->unique()->filter()->toArray();
+            @endphp
+            @foreach ($categories as $category)
+                <label>
+                    <input type="checkbox" name="categorie[]" value="{{ $category }}" 
+                        {{ is_array($exercise->categorie) && in_array($category, $exercise->categorie) ? 'checked' : '' }}>
+                    {{ $category }}
+                </label>
+                <br>
+            @endforeach
+        </div>
+        <input type="text" id="new_category" placeholder="Add new category">
+        <button type="button" onclick="addNewCategory()">Add Category</button>
+        <br><br>
 
-	<!-- Onderdeel -->
-	<label for="onderdeel"><strong>Onderdeel:</strong></label>
-	<select id="onderdeel" name="onderdeel" onchange="toggleCustomOnderdeelInput()">
-		@php
-			$onderdelen = collect($exercises)->pluck('onderdeel')->unique()->filter()->toArray();
-		@endphp
-		@foreach ($onderdelen as $onderdeel)
-			<option value="{{ $onderdeel }}" {{ $exercise->onderdeel == $onderdeel ? 'selected' : '' }}>
-				{{ $onderdeel }}
-			</option>
-		@endforeach
-		<option value="custom" {{ $exercise->onderdeel == 'custom' ? 'selected' : '' }}>Other...</option>
-	</select>
-	<br><br>
-	<input type="text" id="custom_onderdeel" name="custom_onderdeel" placeholder="Custom Onderdeel" style="display: none;">
-	<br><br>
-
-	<script>
-		// Function to toggle the custom category input field
-		function toggleCustomCategoryInput() {
-			var categorySelect = document.getElementById('categorie');
-			var customCategoryInput = document.getElementById('custom_categorie');
-
-			if (categorySelect.value === 'custom') {
-				customCategoryInput.style.display = 'block'; // Show custom input
-			} else {
-				customCategoryInput.style.display = 'none'; // Hide custom input
-			}
-		}
-
-		// Function to toggle the custom onderdeel input field
-		function toggleCustomOnderdeelInput() {
-			var onderdeelSelect = document.getElementById('onderdeel');
-			var customOnderdeelInput = document.getElementById('custom_onderdeel');
-
-			if (onderdeelSelect.value === 'custom') {
-				customOnderdeelInput.style.display = 'block'; // Show custom input
-			} else {
-				customOnderdeelInput.style.display = 'none'; // Hide custom input
-			}
-		}
-
-		// Run the functions to ensure visibility on page load (if already selected as 'custom')
-		window.onload = function() {
-			toggleCustomCategoryInput();
-			toggleCustomOnderdeelInput();
-		};
-	</script>
-
+        <!-- Onderdeel -->
+        <label><strong>Onderdeel:</strong></label>
+        <div id="onderdeel_container">
+            @php
+                $onderdelen = collect($exercises)->pluck('onderdeel')->flatten()->unique()->filter()->toArray();
+            @endphp
+            @foreach ($onderdelen as $onderdeel)
+                <label>
+                    <input type="checkbox" name="onderdeel[]" value="{{ $onderdeel }}" 
+                        {{ is_array($exercise->onderdeel) && in_array($onderdeel, $exercise->onderdeel) ? 'checked' : '' }}>
+                    {{ $onderdeel }}
+                </label>
+                <br>
+            @endforeach
+        </div>
+        <input type="text" id="new_onderdeel" placeholder="Add new onderdeel">
+        <button type="button" onclick="addNewOnderdeel()">Add Onderdeel</button>
+        <br><br>
 
         <!-- Leeftijdsgroep -->
         <label><strong>Leeftijdsgroep:</strong></label>
@@ -111,7 +139,6 @@
         </div>
         <br><br>
 
-
         <!-- Duur -->
         <label for="duur"><strong>Duur (in minutes):</strong></label>
         <input type="number" id="duur" name="duur" value="{{ $exercise->duur }}" required>
@@ -124,7 +151,9 @@
 
         <!-- Benodigdheden -->
         <label for="benodigdheden"><strong>Benodigdheden:</strong></label>
-        <textarea id="benodigdheden" name="benodigdheden" rows="3">{{ implode(', ', $exercise->benodigdheden ?? []) }}</textarea>
+        <textarea id="benodigdheden" name="benodigdheden" rows="3">
+            {{ is_array($exercise->benodigdheden) ? implode(', ', $exercise->benodigdheden) : $exercise->benodigdheden }}
+        </textarea>
         <br><br>
 
         <!-- Water Nodig -->
@@ -149,12 +178,12 @@
 
         <!-- Afbeeldingen -->
         <label for="afbeeldingen"><strong>Afbeeldingen:</strong></label>
-        <textarea id="afbeeldingen" name="afbeeldingen" rows="3">{{ implode(', ', $exercise->afbeeldingen ?? []) }}</textarea>
+        <textarea id="afbeeldingen" name="afbeeldingen" rows="3">{{ is_array($exercise->afbeeldingen) ? implode(', ', $exercise->afbeeldingen) : $exercise->afbeeldingen }}</textarea>
         <br><br>
 
         <!-- Videos -->
         <label for="videos"><strong>Videos:</strong></label>
-        <textarea id="videos" name="videos" rows="3">{{ implode(', ', $exercise->videos ?? []) }}</textarea>
+        <textarea id="videos" name="videos" rows="3">{{ is_array($exercise->videos) ? implode(', ', $exercise->videos) : $exercise->videos }}</textarea>
         <br><br>
 
         <!-- Rating -->
@@ -172,15 +201,5 @@
         @method('DELETE')
         <button type="submit" style="background-color: red; color: white;">Delete Exercise</button>
     </form>
-
-    <script>
-        // Show custom input fields if "Other..." is selected
-        document.getElementById('categorie').addEventListener('change', function () {
-            document.getElementById('custom_categorie').style.display = this.value === 'custom' ? 'block' : 'none';
-        });
-        document.getElementById('onderdeel').addEventListener('change', function () {
-            document.getElementById('custom_onderdeel').style.display = this.value === 'custom' ? 'block' : 'none';
-        });
-    </script>
 </body>
 </html>

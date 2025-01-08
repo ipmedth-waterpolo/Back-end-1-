@@ -17,22 +17,21 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
-    // Users Management
+    // Users Management (no changes here, as it already follows the proper structure)
     public function users()
     {
-        $users = User::all(); // Retrieve all users
-        return view('admin.users', ['users' => $users]); // Pass data to the view
+        $users = User::all();
+        return view('admin.users', ['users' => $users]);
     }
-    
+
     public function showUser($id)
     {
-        $user = User::findOrFail($id); // Retrieve the user by ID or throw 404
-        return view('admin.users.show', ['user' => $user]); // Pass data to the view
-    }    
+        $user = User::findOrFail($id);
+        return view('admin.users.show', ['user' => $user]);
+    }
 
     public function createUser()
     {
-        // Render the view for the "Create User" form
         return view('admin.users.create');
     }
 
@@ -44,52 +43,45 @@ class AdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Create the user
-        $user = User::create([
+        User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
             'role' => $request->role ?? 'gast',
         ]);
 
-        // Redirect back to the user list with success message
         return redirect()->route('admin.users')->with('success', 'Gebruiker succesvol aangemaakt!');
     }
 
     public function updateUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
-    
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8|confirmed',
             'role' => 'sometimes|string',
         ]);
-    
-        // Update the user
+
         if (isset($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
         }
-    
+
         $user->update($validated);
-    
-        // Redirect back to the user details page with success message
+
         return redirect()->route('admin.users.show', $user->id)->with('success', 'Gebruiker succesvol bijgewerkt!');
     }
-    
 
     public function deleteUser($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
-    
-        // Redirect back to the user list with success message
+
         return redirect()->route('admin.users')->with('success', 'Gebruiker succesvol verwijderd!');
     }
-    
 
-    //exercises mangement
+    // Exercises Management (no major changes here, already structured)
     public function exercises()
     {
         $exercises = Oefening::all();
@@ -99,20 +91,16 @@ class AdminController extends Controller
     public function showExercise($id)
     {
         $exercise = Oefening::findOrFail($id);
-        $exercises = Oefening::all(); // Fetch all exercises to populate dynamic dropdowns
-    
-        return view('admin.exercises.show', [
-            'exercise' => $exercise,
-            'exercises' => $exercises
-        ]);
+        $exercises = Oefening::all();
+        return view('admin.exercises.show', ['exercise' => $exercise, 'exercises' => $exercises]);
     }
 
-    public function createExercisePage()
+    public function createExercise()
     {
         return view('admin.exercises.create');
     }
 
-    public function createExercise(Request $request)
+    public function storeExercise(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -131,16 +119,44 @@ class AdminController extends Controller
             'rating' => 'nullable|integer|min:1|max:5',
         ]);
 
-        $exercise = Oefening::create($validated); // Save the exercise
+        Oefening::create($validated);
 
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully created.');
     }
 
     public function updateExercise(Request $request, $id)
     {
-        $oefening = Oefening::findOrFail($id);
-        $oefening->update($request->all()); // Update the exercise
-
+        $exercise = Oefening::findOrFail($id);
+    
+        // Ensure 'benodigdheden' and 'videos' are arrays before validation
+        if (is_string($request->benodigdheden)) {
+            $request->merge(['benodigdheden' => explode(', ', $request->benodigdheden)]);
+        }
+        if (is_string($request->videos)) {
+            $request->merge(['videos' => explode(', ', $request->videos)]);
+        }
+    
+        // Validate the incoming data
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'categorie' => 'sometimes|array',
+            'onderdeel' => 'sometimes|array',
+            'leeftijdsgroep' => 'sometimes|array',
+            'duur' => 'sometimes|integer',
+            'minimum_aantal_spelers' => 'sometimes|integer',
+            'benodigdheden' => 'sometimes|array', // Now this will be treated as an array
+            'water_nodig' => 'sometimes|boolean',
+            'omschrijving' => 'sometimes|string',
+            'variatie' => 'nullable|string',
+            'source' => 'nullable|string',
+            'afbeeldingen' => 'nullable|array',
+            'videos' => 'sometimes|array', // Now this will be treated as an array
+            'rating' => 'nullable|integer|min:1|max:5',
+        ]);
+    
+        // Update the exercise
+        $exercise->update($validated);
+    
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully updated.');
     }
 
@@ -152,25 +168,92 @@ class AdminController extends Controller
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully deleted.');
     }
 
-    // Trainings Management
+    // Training Management
     public function trainings()
     {
         $trainings = Training::all();
-        return response()->json($trainings);
+        return view('admin.trainings', ['trainings' => $trainings]);
     }
 
     public function showTraining($id)
     {
-        $training = Training::findOrFail($id);
-        $oefeningen = Oefening::whereIn('id', json_decode($training->oefeningIDs))->get();
-
-        return response()->json([
+        // Fetch the training along with the user who created it
+        $training = Training::with('user')->findOrFail($id);
+    
+        // Check if 'oefeningIDs' is a string, and decode it if needed
+        $oefeningIDs = is_string($training->oefeningIDs) ? json_decode($training->oefeningIDs) : $training->oefeningIDs;
+    
+        // Fetch exercises associated with this training
+        $oefeningen = Oefening::whereIn('id', $oefeningIDs)->get();
+    
+        return view('admin.trainings.show', [
             'training' => $training,
             'oefeningen' => $oefeningen,
         ]);
     }
 
-    public function createTraining(Request $request)
+    public function showTrainingEdit($id)
+    {
+        // Find the training by ID
+        $training = Training::findOrFail($id);
+
+        // Get all exercises for the dropdown
+        $exercises = Oefening::all();
+
+        return view('admin.trainings.edit', [
+            'training' => $training,
+            'exercises' => $exercises,
+        ]);
+    }
+
+    public function updateTraining(Request $request, $id)
+    {
+
+        // Ensure 'enabled' is either true or false.
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'beschrijving' => 'required|string',
+            'totale_duur' => 'required|integer|min:0',
+            'enabled' => 'nullable|boolean',  // 'nullable' allows the field to be null, 'boolean' ensures it's true or false
+            'ratings' => 'nullable|numeric|min:0|max:5',
+            'oefeningIDs' => 'array|nullable',
+            'oefeningIDs.*' => 'exists:oefening,id',
+        ]);
+
+// If 'enabled' is not set, set it to false
+if (!array_key_exists('enabled', $validated)) {
+    $validated['enabled'] = false;
+}
+    
+        // Find the training
+        $training = Training::findOrFail($id);
+    
+        // Update the training details
+        $training->update([
+            'name' => $validated['name'],
+            'beschrijving' => $validated['beschrijving'],
+            'totale_duur' => $validated['totale_duur'],
+            'enabled' => $validated['enabled'],
+            'ratings' => $validated['ratings'],
+        ]);
+    
+        // Sync the associated exercises (oefeningen)
+        //if ($request->has('oefeningIDs')) {
+        //    $training->oefening()->sync($validated['oefeningIDs']);
+        //}
+    
+        // Redirect to the overview page (training list)
+        return redirect()->route('admin.trainings')->with('success', 'Training updated successfully!');
+    }    
+
+    public function createTraining()
+    {
+        // Get all exercises for the dropdown
+        $exercises = Oefening::all();
+        return view('admin.trainings.create', compact('exercises'));
+    }
+
+    public function storeTraining(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -179,7 +262,7 @@ class AdminController extends Controller
             'oefeningIDs' => 'required|array',
         ]);
 
-        $training = Training::create([
+        Training::create([
             'name' => $validated['name'],
             'beschrijving' => $validated['beschrijving'],
             'totale_duur' => $validated['totale_duur'],
@@ -188,21 +271,7 @@ class AdminController extends Controller
             'enabled' => true,
         ]);
 
-        return response()->json(['message' => 'Training succesvol aangemaakt', 'training' => $training]);
-    }
-
-    public function updateTraining(Request $request, $id)
-    {
-        $training = Training::findOrFail($id);
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'beschrijving' => 'sometimes|string',
-            'totale_duur' => 'sometimes|integer',
-            'oefeningIDs' => 'sometimes|array',
-        ]);
-
-        $training->update($validated);
-        return response()->json(['message' => 'Training succesvol bijgewerkt', 'training' => $training]);
+        return redirect()->route('admin.trainings')->with('success', 'Training successfully created.');
     }
 
     public function deleteTraining($id)
@@ -210,6 +279,6 @@ class AdminController extends Controller
         $training = Training::findOrFail($id);
         $training->delete();
 
-        return response()->json(['message' => 'Training succesvol verwijderd']);
+        return redirect()->route('admin.trainings')->with('success', 'Training successfully deleted.');
     }
 }

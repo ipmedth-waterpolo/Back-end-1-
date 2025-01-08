@@ -65,4 +65,10 @@ class User extends Authenticatable
     {
         return $this->role === 'gast';
     }
+
+    // Define the relationship with the Training model
+    public function trainings()
+    {
+        return $this->hasMany(Training::class, 'userID');
+    }
 }
