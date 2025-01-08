@@ -23,8 +23,18 @@ class Training extends Model
 
     // Zorg ervoor dat oefeningIDs automatisch als array worden behandeld
     protected $casts = [
-        'oefeningIDs' => 'array',
+        'oefeningIDs' => 'array', // Hierdoor wordt JSON automatisch omgezet naar een array
     ];
+
+    public function reviews()
+    {
+        return $this->hasMany(Rating::class, 'trainingID');
+    }
+
+    public function averageRating()
+    {
+        return round($this->reviews()->avg('ratingNumber'), 1);
+    }
 
     public function user()
     {
