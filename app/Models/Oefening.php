@@ -27,8 +27,6 @@ class Oefening extends Model
         'source',
         'afbeeldingen',
         'videos',
-        'rating',
-        'icon',
         'rating',      // Included rating for completeness
     ];
 
@@ -48,10 +46,8 @@ class Oefening extends Model
         'rating' => 'integer',        // Ensure rating is an integer
     ];
 
-    // Many-to-many relationship with Training
-    public function trainings()
-    {
-        return $this->belongsToMany(Training::class, 'oefening_training', 'oefening_id', 'training_id')
-                    ->withTimestamps();
-    }
+    /**
+     * Additional methods or relationships can be added here as needed.
+     * For example, you can define scopes or custom accessors/mutators.
+     */
 }
