@@ -28,8 +28,8 @@ class TrainingController extends Controller
         'name' => $request->input('name'),
         'beschrijving' => $request->input('beschrijving'),
         'totale_duur' => $request->input('totale_duur'),
-        'oefeningIDs' => json_encode(explode(',', $request->input('oefeningen'))), // Oefeningen-ID's als JSON opslaan
-        'userID' => auth()->id(), // Hardcoded User ID
+        'oefeningIDs' => $request->input('oefeningen'), // Oefeningen-ID's als JSON opslaan
+        'userID' => Auth::id(),
         'enabled' => true, // Optioneel, standaard true
     ]);
 
@@ -121,7 +121,7 @@ class TrainingController extends Controller
     // Sla de rating op
     $rating = Rating::create([
         'ratingNumber' => $request->input('ratingNumber'),
-        'userID' => auth()->id(), // Huidige gebruiker
+        'userID' => Auth::id(),
         'trainingID' => $trainingID,
     ]);
 

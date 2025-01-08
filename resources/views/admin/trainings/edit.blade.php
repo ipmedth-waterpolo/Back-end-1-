@@ -67,22 +67,22 @@
         <input type="number" id="ratings" name="ratings" value="{{ old('ratings', $training->ratings) }}" step="0.1" min="0" max="5">
     </div>
 
-    <!-- Associated Exercises (Checkboxes) -->
+<!-- Associated Exercises (Checkboxes) -->
+<div>
+    <label>Associated Exercises</label>
     <div>
-        <label>Associated Exercises</label>
-        <div>
-            @foreach ($exercises as $exercise)
-                <div>
-                    <input type="checkbox" name="oefeningIDs[]" value="{{ $exercise->id }}" 
-                           id="exercise-{{ $exercise->id }}"
-                           @if (in_array($exercise->id, old('oefeningIDs', $training->oefeningIDs ?? []))) checked @endif
-                           onclick="updateTotalDuration()">
-                    <label for="exercise-{{ $exercise->id }}">{{ $exercise->name }} ({{ $exercise->duur }} minutes)</label>
-                    <input type="hidden" id="duration-{{ $exercise->id }}" value="{{ $exercise->duur }}">
-                </div>
-            @endforeach
-        </div>
+        @foreach ($exercises as $exercise)
+            <div>
+                <input type="checkbox" name="oefeningIDs[]" value="{{ $exercise->id }}" 
+                       id="exercise-{{ $exercise->id }}"
+                       @if (in_array($exercise->id, explode(',', $training->oefeningIDs ?? ''))) checked @endif
+                       onclick="updateTotalDuration()">
+                <label for="exercise-{{ $exercise->id }}">{{ $exercise->name }} ({{ $exercise->duur }} minutes)</label>
+                <input type="hidden" id="duration-{{ $exercise->id }}" value="{{ $exercise->duur }}">
+            </div>
+        @endforeach
     </div>
+</div>
 
     <!-- Hidden Total Duration Field (Not Displayed) -->
     <div style="display: none;">
