@@ -48,12 +48,21 @@
                         <form action="{{ route('admin.trainings.delete', $training->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit">Delete</button>
+                            <button type="button" onclick="confirmDelete()">Delete</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    <script>
+        function confirmDelete() {
+        // Toon een bevestigingspopup
+            if (confirm("Weet je zeker dat je deze training wilt verwijderen?")) {
+                // Verstuur het formulier alleen bij bevestiging
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
 </body>
 </html>

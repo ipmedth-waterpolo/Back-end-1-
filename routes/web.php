@@ -41,6 +41,8 @@ Route::middleware(['auth', 'role:admin,onderhoud'])->prefix('admin')->group(func
         Route::post('/', [AdminController::class, 'storeExercise'])->name('admin.exercises.store');
         Route::put('/{id}', [AdminController::class, 'updateExercise'])->name('admin.exercises.update');
         Route::delete('/{id}', [AdminController::class, 'deleteExercise'])->name('admin.exercises.delete');
+        Route::post('/upload', [AdminController::class, 'uploadExercises'])->name('admin.exercises.upload');
+
     });
 
     Route::prefix('trainings')->group(function () {

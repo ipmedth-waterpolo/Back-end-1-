@@ -8,6 +8,9 @@ use App\Models\Training;
 use App\Models\Oefening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -171,6 +174,81 @@ class AdminController extends Controller
 
         return redirect()->route('admin.exercises')->with('success', 'Exercise successfully deleted.');
     }
+
+    public function uploadExercises(Request $request)
+{
+    try {
+        // Log dat het verzoek is aangekomen
+        Log::info('JSON Upload gestart.');
+
+        // Controleer of het bestand is geüpload
+        if (!$request->hasFile('jsonFile')) {
+            Log::error('Geen bestand ontvangen.');
+            return redirect()->back()->withErrors('Geen bestand ontvangen.');
+        }
+
+        // Valideer het bestandstype
+        $request->validate([
+            'jsonFile' => 'required|file|mimes:json|max:2048',
+        ]);
+
+        // Log dat de validatie is geslaagd
+        Log::info('Bestand validatie geslaagd.');
+
+        // Decodeer de JSON-inhoud
+        $file = $request->file('jsonFile');
+        $jsonData = json_decode(file_get_contents($file->getRealPath()), true);
+
+        // Log de JSON-data om te controleren of het correct is
+        Log::info('JSON-data: ', $jsonData);
+
+        // Controleer of de JSON correct is gedecodeerd
+        if ($jsonData === null) {
+            Log::error('Fout bij het decoderen van JSON.');
+            return redirect()->back()->withErrors('JSON-bestand is niet correct geformatteerd.');
+        }
+
+        // Valideer de JSON-structuur
+        $validator = Validator::make(['data' => $jsonData], [
+            'data.*.name' => 'required|string|max:255',
+            'data.*.categorie' => 'required|array',
+            'data.*.onderdeel' => 'required|array',
+            'data.*.leeftijdsgroep' => 'required|array',
+            'data.*.duur' => 'required|integer|min:1',
+            'data.*.minimum_aantal_spelers' => 'required|integer|min:1',
+            'data.*.omschrijving' => 'required|string',
+            'data.*.water_nodig' => 'nullable|boolean',
+            'data.*.benodigdheden' => 'nullable|array',
+            'data.*.variatie' => 'nullable|string',
+            'data.*.source' => 'nullable|string',
+            'data.*.afbeeldingen' => 'nullable|array',
+            'data.*.videos' => 'nullable|array',
+            'data.*.rating' => 'nullable|integer|min:1|max:5',
+        ]);
+
+        // Log validatiefouten indien aanwezig
+        if ($validator->fails()) {
+            Log::error('Validatiefouten: ', $validator->errors()->toArray());
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Log dat validatie is geslaagd
+        Log::info('JSON validatie geslaagd.');
+
+        // Voeg de oefeningen toe aan de database
+        foreach ($jsonData as $exerciseData) {
+            Oefening::create($exerciseData);
+        }
+
+        Log::info('Oefeningen succesvol toegevoegd.');
+
+        return redirect()->route('admin.exercises')->with('success', 'Oefeningen succesvol geüpload.');
+    } catch (\Exception $e) {
+        Log::error('Fout bij upload: ' . $e->getMessage());
+        return redirect()->back()->withErrors('Er is een fout opgetreden: ' . $e->getMessage());
+    }
+}
+
 
     // Training Management
     public function trainings()

@@ -229,6 +229,7 @@ class AuthController extends Controller
     // Get all users' information (Admins and Onderhoud roles only)
     public function getAllUsersInfo()
     {
+        dd('hoi');
         $users = User::all();
 
         return response()->json([

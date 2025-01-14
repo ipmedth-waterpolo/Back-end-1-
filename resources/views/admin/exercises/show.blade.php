@@ -195,11 +195,22 @@
         <button type="submit">Update Exercise</button>
     </form>
 
-    <!-- Delete Form -->
-    <form action="{{ route('admin.exercises.delete', $exercise->id) }}" method="POST" style="margin-top: 20px;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" style="background-color: red; color: white;">Delete Exercise</button>
-    </form>
+<!-- Delete Form -->
+<form id="deleteForm" action="{{ route('admin.exercises.delete', $exercise->id) }}" method="POST" style="margin-top: 20px;">
+    @csrf
+    @method('DELETE')
+    <button type="button" onclick="confirmDelete()" style="background-color: red; color: white;">Delete Exercise</button>
+</form>
+
+<script>
+    function confirmDelete() {
+        // Toon een bevestigingspopup
+        if (confirm("Weet je zeker dat je deze oefening wilt verwijderen?")) {
+            // Als de gebruiker bevestigt, verstuur het formulier
+            document.getElementById('deleteForm').submit();
+        }
+        // Anders gebeurt er niets (actie wordt geannuleerd)
+    }
+</script>
 </body>
 </html>
