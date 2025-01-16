@@ -71,4 +71,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Training::class, 'userID');
     }
+    // Voeg een dynamische methode toe om beschikbare rollen te beperken op basis van de ingelogde gebruiker
+public function getAvailableRoles()
+{
+    if ($this->isOnderhoud()) {
+        // Onderhoudsgebruikers kunnen geen andere onderhoudsgebruikers of admins aanmaken
+        return ['lid', 'gast', 'trainer'];
+    }
+
+    return self::ROLES; // Admins of andere hogere rollen kunnen alles instellen
+}
+
 }

@@ -57,6 +57,23 @@ class AuthController extends Controller
         return Redirect::route('admin.dashboard')->with('message', 'Inloggen succesvol.');
     }
 
+    // Logout method
+    public function logout(Request $request)
+    {
+        // Revoke all tokens for the authenticated user
+        $request->user()->tokens()->delete();
+
+        // Log out the user from the session
+        Auth::logout();
+
+        // Invalidate the session and regenerate CSRF token for security
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to the login page with a message
+        return Redirect::route('admin.login')->with('message', 'U bent succesvol uitgelogd.');
+    }
+
     // Register a new user
     public function register(Request $request)
     {
@@ -229,7 +246,6 @@ class AuthController extends Controller
     // Get all users' information (Admins and Onderhoud roles only)
     public function getAllUsersInfo()
     {
-        dd('hoi');
         $users = User::all();
 
         return response()->json([

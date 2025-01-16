@@ -1,29 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Training</title>
-    <script>
-        // Function to calculate the total duration based on selected exercises
-        function updateTotalDuration() {
-            let totalDuration = 0;
+@extends('layouts.admin')
 
-            // Iterate through all checkboxes to sum up the durations of selected exercises
-            document.querySelectorAll('input[name="oefeningIDs[]"]:checked').forEach(function (checkbox) {
-                let exerciseId = checkbox.value;
-                let exerciseDuration = parseInt(document.getElementById('duration-' + exerciseId).value);
-                totalDuration += exerciseDuration;
-            });
+@section('title', 'Edit a Training') <!-- Set the page title -->
 
-            // Update the hidden total duration field with the calculated value
-            document.getElementById('totale_duur').value = totalDuration;
-        }
-    </script>
-</head>
-<body>
+@section('content')
     <p>
-        <a href="{{ route('admin.trainings') }}" class="btn">Back to Trainings</a>
+        <a href="{{ route('admin.trainings') }}" class="btn">Terug naar Trainingen</a>
     </p>
 
     @if ($errors->any())
@@ -43,33 +24,33 @@
 
     <!-- Training Name -->
     <div>
-        <label for="name">Name</label>
+        <label for="name">Naam</label>
         <input type="text" id="name" name="name" value="{{ old('name', $training->name) }}" required>
     </div>
 
     <!-- Training Description -->
     <div>
-        <label for="beschrijving">Description</label>
+        <label for="beschrijving">Omschrijving</label>
         <textarea id="beschrijving" name="beschrijving" rows="4" required>{{ old('beschrijving', $training->beschrijving) }}</textarea>
     </div>
 
     <!-- Enabled Toggle -->
-    <div>
+    <div class="checkbox-container">
         <!-- Hidden input to ensure the 'enabled' field is submitted as 'false' when unchecked -->
         <input type="hidden" name="enabled" value="0">
-        <label for="enabled">Enabled</label>
+        <label for="enabled">Geef weer</label>
         <input type="checkbox" id="enabled" name="enabled" value="1" {{ $training->enabled ? 'checked' : '' }}>
     </div>
 
     <!-- Ratings -->
     <div>
-        <label for="ratings">Ratings (optional)</label>
+        <label for="ratings">Waardering (optioneel)</label>
         <input type="number" id="ratings" name="ratings" value="{{ old('ratings', $training->ratings) }}" step="0.1" min="0" max="5">
     </div>
 
 <!-- Associated Exercises (Checkboxes) -->
-<div>
-    <label>Associated Exercises</label>
+<div class="checkbox-container">
+    <label>Oefeningen</label>
     <div>
         @foreach ($exercises as $exercise)
             <div>
@@ -77,7 +58,7 @@
                        id="exercise-{{ $exercise->id }}"
                        @if (in_array($exercise->id, explode(',', $training->oefeningIDs ?? ''))) checked @endif
                        onclick="updateTotalDuration()">
-                <label for="exercise-{{ $exercise->id }}">{{ $exercise->name }} ({{ $exercise->duur }} minutes)</label>
+                <label for="exercise-{{ $exercise->id }}">{{ $exercise->name }} ({{ $exercise->duur }} min)</label>
                 <input type="hidden" id="duration-{{ $exercise->id }}" value="{{ $exercise->duur }}">
             </div>
         @endforeach
@@ -94,5 +75,30 @@
         <button type="submit">Update Training</button>
     </div>
 </form>
-</body>
-</html>
+
+<p>
+        <a href="{{ route('admin.trainings') }}" class="btn">Naar trainingen lijst</a>
+    </p>
+
+<br>
+<br>
+<br>
+<br>
+
+    <script>
+        // Function to calculate the total duration based on selected exercises
+        function updateTotalDuration() {
+            let totalDuration = 0;
+
+            // Iterate through all checkboxes to sum up the durations of selected exercises
+            document.querySelectorAll('input[name="oefeningIDs[]"]:checked').forEach(function (checkbox) {
+                let exerciseId = checkbox.value;
+                let exerciseDuration = parseInt(document.getElementById('duration-' + exerciseId).value);
+                totalDuration += exerciseDuration;
+            });
+
+            // Update the hidden total duration field with the calculated value
+            document.getElementById('totale_duur').value = totalDuration;
+        }
+    </script>
+@endsection

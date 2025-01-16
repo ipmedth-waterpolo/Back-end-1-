@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password; // For password reset functionality
+use App\Mail\PasswordResetMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -35,7 +39,10 @@ class AdminController extends Controller
 
     public function createUser()
     {
-        return view('admin.users.create');
+        // Check if the current user is 'onderhoud' and pass restriction flag to the view
+        $restrictAdminRole = Auth::user()->role === 'onderhoud';
+    
+        return view('admin.users.create', compact('restrictAdminRole'));
     }
 
     public function storeUser(Request $request)
@@ -63,7 +70,6 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:8|confirmed',
             'role' => 'sometimes|string',
         ]);
 
@@ -73,7 +79,7 @@ class AdminController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.show', $user->id)->with('success', 'Gebruiker succesvol bijgewerkt!');
+        return redirect()->route('admin.users', $user->id)->with('success', 'Gebruiker succesvol bijgewerkt!');
     }
 
     public function deleteUser($id)
@@ -83,6 +89,20 @@ class AdminController extends Controller
 
         return redirect()->route('admin.users')->with('success', 'Gebruiker succesvol verwijderd!');
     }
+
+    public function resetPassword(User $user)
+{
+    // Check if the logged-in user is an admin
+    if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'onderhoud') {
+        return redirect()->route('admin.users')->with('error', 'Je hebt geen toegang om het wachtwoord te resetten.');
+    }
+
+    // Send the password reset email
+    Password::sendResetLink(['email' => $user->email]);
+
+    // Return success message
+    return redirect()->route('admin.users')->with('success', 'Er is een wachtwoord reset link naar de gebruiker gestuurd.');
+}
 
     // Exercises Management (no major changes here, already structured)
     public function exercises()
@@ -106,28 +126,38 @@ class AdminController extends Controller
 
     public function storeExercise(Request $request)
     {
+
+        if (is_string($request->videos)) {
+            $request->merge(['videos' => explode(', ', $request->videos)]);
+        }
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'categorie' => 'required|array',
             'onderdeel' => 'required|array',
             'leeftijdsgroep' => 'required|array',
-            'duur' => 'required|integer|min:1', // Minimum 1 minute for duration
-            'minimum_aantal_spelers' => 'required|integer|min:1', // Minimum 1 player
-            'benodigdheden' => 'nullable|array', // Changed to nullable if it's optional
-            'water_nodig' => 'nullable|boolean', // Changed to nullable
+            'duur' => 'required|integer|min:1',
+            'minimum_aantal_spelers' => 'required|integer|min:1',
+            'benodigdheden' => 'nullable|string', // Input as string
+            'water_nodig' => 'nullable|boolean',
             'omschrijving' => 'required|string',
             'variatie' => 'nullable|string',
             'source' => 'nullable|string',
-            'afbeeldingen' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
-            'videos' => 'nullable|string', // This could be a string (comma-separated file paths/URLs)
+            'afbeeldingen' => 'nullable|string',
+            'videos' => 'nullable|string',
             'rating' => 'nullable|integer|min:1|max:5',
         ]);
+    
+        // Split benodigdheden on commas, spaces, or both
+        if (!empty($validated['benodigdheden'])) {
+            $validated['benodigdheden'] = array_filter(array_map('trim', preg_split('/[\s,]+/', $validated['benodigdheden'])));
+        }
     
         // Create the exercise
         Oefening::create($validated);
     
         // Redirect with success message
-        return redirect()->route('admin.exercises')->with('success', 'Exercise successfully created.');
+        return redirect()->route('admin.exercises')->with('success', 'Oefening gemaakt.');
     }
     
 
@@ -369,5 +399,22 @@ class AdminController extends Controller
         $training->delete();
 
         return redirect()->route('admin.trainings')->with('success', 'Training successfully deleted.');
+    }
+
+
+    public function sendPasswordResetLink(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+    
+        if (!$user) {
+            return back()->withErrors(['email' => 'Er is geen account gekoppeld aan dit e-mailadres.']);
+        }
+
+        $token = Str::random(60); // Bijvoorbeeld een token genereren
+
+        // Verstuur de wachtwoord-reset e-mail
+        Mail::to($user->email)->send(new PasswordResetMail($user, $token));
+
+        return back()->with('success', 'Wachtwoord reset link is verzonden.');
     }
 }

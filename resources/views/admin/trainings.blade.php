@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Trainings</title>
-</head>
-<body>
+@extends('layouts.admin')
+
+@section('title', 'Training overview') <!-- Set the page title -->
+
+@section('content')
     <!-- Back Button -->
     <p>
-        <a href="{{ route('admin.dashboard') }}" class="btn">Back</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn">Terug</a>
     </p>
 
     <h1>Trainings</h1>
-    <a href="{{ route('admin.trainings.create') }}">+ Add New Training</a>
+    <a href="{{ route('admin.trainings.create') }}" class="btn">+ Maak een nieuwe Training</a>
     <br>
 
     <!-- Display Flash Messages -->
@@ -23,15 +20,15 @@
     @endif
 
     <!-- Trainings Table -->
-    <table border="2">
-        <thead>
+    <div class="table-container"> 
+    <table class="exercise-table">        <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Duration (mins)</th>
-                <th>Enabled</th>
-                <th>Actions</th>
+                <th>Naam</th>
+                <th>Omschrijving</th>
+                <th>Duratie (mins)</th>
+                <th>Beschikbaar</th>
+                <th>Acties</th>
             </tr>
         </thead>
         <tbody>
@@ -43,18 +40,19 @@
                     <td>{{ $training->totale_duur }}</td>
                     <td>{{ $training->enabled ? 'Yes' : 'No' }}</td>
                     <td>
-                        <a href="{{ route('admin.trainings.show', $training->id) }}">View</a> |
-                        <a href="{{ route('admin.trainings.edit', $training->id) }}">edit</a> |
+                        <a href="{{ route('admin.trainings.show', $training->id) }}" class="btn">View</a> |
+                        <a href="{{ route('admin.trainings.edit', $training->id) }}" class="btn">edit</a> |
                         <form action="{{ route('admin.trainings.delete', $training->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="button" onclick="confirmDelete()">Delete</button>
+                            <button type="button" onclick="confirmDelete()" class="btn-delete">verwijderen</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    <div>
     <script>
         function confirmDelete() {
         // Toon een bevestigingspopup
@@ -64,5 +62,4 @@
             }
         }
     </script>
-</body>
-</html>
+@endsection

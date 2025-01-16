@@ -1,55 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Exercises</title>
-</head>
-<body>
-    <!-- Back Button -->
+@extends('layouts.admin')
+
+@section('title', 'Oefeningen')
+
+@section('content')
+    <!-- Terug knop -->
     <p>
-    <a href="{{ route('admin.dashboard') }}" class="btn">Back</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn">Terug</a>
     </p>
 
-    <h1>Exercises</h1>
-    <a href="{{ route('admin.exercises.create') }}">+ Add New Exercise</a>
-    <br>
+    <h1>Oefeningen Beheren</h1>
+    <a href="{{ route('admin.exercises.create') }}" class="btn">+ Nieuwe Oefening Toevoegen</a>
+    <br><br>
 
-    <!-- Display Flash Messages -->
+    <!-- Flash Messages -->
     @if (session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
+        <p class="flash-message success">{{ session('success') }}</p>
     @elseif (session('error'))
-        <p style="color: red;">{{ session('error') }}</p>
+        <p class="flash-message error">{{ session('error') }}</p>
     @endif
 
     @if ($errors->any())
-        <ul>
+        <ul class="error-list">
             @foreach ($errors->all() as $error)
-                <li style="color: red;">{{ $error }}</li>
+                <li>{{ $error }}</li>
             @endforeach
         </ul>
     @endif
 
-    <!-- File Upload Form -->
-    <form action="{{ route('admin.exercises.upload') }}" method="POST" enctype="multipart/form-data">
+    <!-- Bestanden Uploaden -->
+    <form action="{{ route('admin.exercises.upload') }}" method="POST" enctype="multipart/form-data" class="upload-form">
         @csrf
-        <label for="jsonFile">Upload Exercises File:</label>
+        <label for="jsonFile">Upload Oefeningen Bestand:</label>
         <input type="file" name="jsonFile" id="jsonFile" required>
         <span id="file-error" class="error"></span>
-        <button type="submit" id="submit-btn">Upload</button>
+        <button type="submit" id="submit-btn" class="btn">Upload</button>
     </form>
 
-    <br>
-
-    <!-- Exercises Table -->
-    <table border="2">
+    <!-- Oefeningen Tabel -->
+    <div class="table-container"> 
+    <table class="exercise-table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>Naam</th>
                 <th>Categorie</th>
                 <th>Duur</th>
-                <th>Actions</th>
+                <th>Acties</th>
             </tr>
         </thead>
         <tbody>
@@ -64,51 +60,54 @@
                             {{ $exercise->categorie }}
                         @endif
                     </td>
-                    <td>{{ $exercise->duur }} mins</td>
+                    <td>{{ $exercise->duur }} minuten</td>
                     <td>
-                        <a href="{{ route('admin.exercises.show', $exercise->id) }}">View</a> |
-                        <form id="deleteForm" action="{{ route('admin.exercises.delete', $exercise->id) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('admin.exercises.show', $exercise->id) }}" class="btn">Bekijk</a> |
+                        <form id="deleteForm" action="{{ route('admin.exercises.delete', $exercise->id) }}" method="POST" class="delete-form">
                             @csrf
                             @method('DELETE')
-                            <button type="button" onclick="confirmDelete()">Delete</button>
+                            <button type="button" onclick="confirmDelete()" class="btn-delete">Verwijderen</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+
     <script>
+        // Bestanden validatie
         document.addEventListener('DOMContentLoaded', function () {
             const exerciseFileInput = document.getElementById('jsonFile');
             const errorMessage = document.getElementById('file-error');
             const submitButton = document.getElementById('submit-btn');
 
-            // Allowed file types
+            // Toegestane bestandtypes
             const allowedFileTypes = ['application/json'];
 
             exerciseFileInput.addEventListener('change', function () {
                 const file = exerciseFileInput.files[0];
 
                 if (file) {
-                    // Check if the file type is valid
                     if (!allowedFileTypes.includes(file.type)) {
-                        errorMessage.textContent = 'Invalid file type. Please upload a JSON file.';
-                        submitButton.disabled = true; // Disable the submit button
+                        errorMessage.textContent = 'Ongeldig bestandstype. Upload een JSON bestand.';
+                        submitButton.disabled = true;
                     } else {
-                        errorMessage.textContent = ''; // Clear the error message
-                        submitButton.disabled = false; // Enable the submit button
+                        errorMessage.textContent = '';
+                        submitButton.disabled = false;
                     }
                 }
             });
         });
 
-    function confirmDelete() {
-        // Toon een bevestigingspopup
-        if (confirm("Weet je zeker dat je deze oefening wilt verwijderen?")) {
-            // Verstuur het formulier alleen bij bevestiging
-            document.getElementById('deleteForm').submit();
+        function confirmDelete() {
+            if (confirm("Weet je zeker dat je deze oefening wilt verwijderen?")) {
+                document.getElementById('deleteForm').submit();
+            }
         }
-    }
     </script>
-</body>
-</html>
+@endsection

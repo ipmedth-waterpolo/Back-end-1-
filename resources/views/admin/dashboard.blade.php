@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-</head>
-<body>
-    <h1>Welcome to the Admin Dashboard</h1>
-    <h1>Select an option</h1>
+@extends('layouts.admin')
+
+@section('title', 'Dashboard')
+
+@section('content')
+    <h1>Welkom bij het Waterpolo Admin Paneel</h1>
+    <h2>Selecteer een optie:</h2>
     <ul>
-        <li><a href="{{ route('admin.users') }}">Manage Users</a></li>
-        <li><a href="{{ route('admin.trainings') }}">Manage Trainings</a></li>
-        <li><a href="{{ route('admin.exercises') }}">Manage Exercises</a></li>
+        <li><a href="{{ route('admin.users') }}">Gebruikersbeheer</a></li>
+        <li><a href="{{ route('admin.trainings') }}">Trainingen beheren</a></li>
+        <li><a href="{{ route('admin.exercises') }}">Oefeningen beheren</a></li>
     </ul>
-</body>
-</html>
+    <!-- Logout Button -->
+    <form action="{{ route('admin.logout') }}" method="POST" style="margin-top: 20px;">
+        @csrf <!-- Include the CSRF token for security -->
+        <button type="submit" style="background-color: #ff4d4d; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            Logout
+        </button>
+    </form>
+@endsection

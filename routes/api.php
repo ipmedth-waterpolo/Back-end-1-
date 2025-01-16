@@ -66,7 +66,6 @@ Route::middleware(['validate_api_key', 'auth:sanctum', 'role:onderhoud,admin'])-
     Route::get('/{id}', [AuthController::class, 'getAnyUserInfo']);
     Route::put('/{id}', [AuthController::class, 'updateAnyUser']);
     Route::delete('/{id}', [AuthController::class, 'deleteAnyUser']);
+    Route::get('/', [AuthController::class, 'getAllUsersInfo']);
 });
-Route::middleware(['validate_api_key', 'auth:sanctum', 'role:onderhoud,admin'])->group(function () {
-    Route::get('user/', [AuthController::class, 'getAllUsersInfo']);
-});
+

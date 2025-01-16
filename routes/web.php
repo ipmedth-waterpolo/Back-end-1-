@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\TrainingController;
-use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\ophalenOefeningen;
@@ -31,6 +29,9 @@ Route::middleware(['auth', 'role:admin,onderhoud'])->prefix('admin')->group(func
         Route::get('/{id}', [AdminController::class, 'showUser'])->name('admin.users.show');
         Route::put('/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+
+        // Password Reset Route (only accessible by admin)
+        Route::post('/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.users.reset-password');
     });
 
     // Exercise Management Routes
@@ -42,25 +43,18 @@ Route::middleware(['auth', 'role:admin,onderhoud'])->prefix('admin')->group(func
         Route::put('/{id}', [AdminController::class, 'updateExercise'])->name('admin.exercises.update');
         Route::delete('/{id}', [AdminController::class, 'deleteExercise'])->name('admin.exercises.delete');
         Route::post('/upload', [AdminController::class, 'uploadExercises'])->name('admin.exercises.upload');
-
     });
 
+    // Training Routes
     Route::prefix('trainings')->group(function () {
-        // List of trainings
         Route::get('/', [AdminController::class, 'trainings'])->name('admin.trainings');
-        // Create a new training
         Route::get('/create', [AdminController::class, 'createTraining'])->name('admin.trainings.create');
-        // Show a specific training (details view)
         Route::get('/{id}', [AdminController::class, 'showTraining'])->name('admin.trainings.show');
-        // Show edit form for a specific training
         Route::get('/{id}/edit', [AdminController::class, 'showTrainingEdit'])->name('admin.trainings.edit');
-        // Store new training
         Route::post('/', [AdminController::class, 'storeTraining'])->name('admin.trainings.store');
-        // Update an existing training
         Route::put('/{id}', [AdminController::class, 'updateTraining'])->name('admin.trainings.update');
-        // Delete a training
         Route::delete('/{id}', [AdminController::class, 'deleteTraining'])->name('admin.trainings.delete');
     });
-    
-
 });
+
+Route::get('password/reset/{token}', [AdminController::class, 'showResetForm'])->name('password.reset');

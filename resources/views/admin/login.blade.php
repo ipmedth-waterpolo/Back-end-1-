@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-</head>
-<body>
-    <h1>Admin Login</h1>
+@extends('layouts.admin')
+
+@section('title', 'Inloggen')
+
+@section('content')
+    <h1>Inloggen</h1>
 
     <form action="{{ url('/admin/login') }}" method="POST">
         @csrf
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br>
+        <label for="email">E-mailadres:</label>
+        <input type="email" name="email" placeholder="Voer uw e-mailadres in" required>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br>
+        <label for="password">Wachtwoord:</label>
+        <input type="password" name="password" placeholder="Voer uw wachtwoord in" required>
 
-        <button type="submit">Login</button>
+        <br>
+        <button type="submit">Inloggen</button>
     </form>
 
     @if(session('message'))
-        <p>{{ session('message') }}</p>
+        <p style="color: green;">{{ session('message') }}</p>
     @endif
-</body>
-</html>
+@endsection
