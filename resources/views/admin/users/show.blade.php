@@ -31,19 +31,21 @@
         <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required>
         <br>
 
-        <label for="role">Rol:</label>
-<select id="role" name="role" required>
-    @foreach (\App\Models\User::ROLES as $role)
-        @if (auth()->user()->role === 'onderhoud' && ($role === 'admin' || $role === 'onderhoud'))
-            <!-- If the user is 'onderhoud', skip 'admin' and 'onderhoud' -->
-            @continue
-        @endif
-        <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
-            {{ ucfirst($role) }}
-        </option>
-    @endforeach
-</select>
-        <br>
+        @if (!(($user->role === 'admin' || $user->role === 'onderhoud') && auth()->user()->role !== 'admin'))
+    <label for="role">Rol:</label>
+    <select id="role" name="role" required>
+        @foreach (\App\Models\User::ROLES as $role)
+            @if (auth()->user()->role === 'onderhoud' && ($role === 'admin' || $role === 'onderhoud'))
+                <!-- Skip roles 'admin' and 'onderhoud' if current user is 'onderhoud' -->
+                @continue
+            @endif
+            <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
+                {{ ucfirst($role) }}
+            </option>
+        @endforeach
+    </select>
+    <br>
+@endif
 
         <button type="submit" class="btn">Gebruiker Bewerken</button>
     </form>

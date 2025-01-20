@@ -25,6 +25,13 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('TrainerPass'),
         ]);
 
+        User::create([
+            'name' => 'Onderhoud User',
+            'email' => 'onderhoud@example.com',
+            'role' => 'onderhoud',
+            'password' => bcrypt('OnderhoudPass'),
+        ]);
+        
         // Call your seeders here
         $this->call([
             OefeningenSeeder::class,

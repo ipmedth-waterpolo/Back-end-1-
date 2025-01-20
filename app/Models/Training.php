@@ -18,29 +18,41 @@ class Training extends Model
         'oefeningIDs',
         'userID',
         'enabled',
-        'ratings',
     ];
 
     // Zorg ervoor dat oefeningIDs automatisch als array worden behandeld
     protected $casts = [
-        'oefeningIDs' => 'string', // Hierdoor wordt JSON automatisch omgezet naar een array
+        'oefeningIDs' => 'array', // JSON wordt automatisch omgezet naar een array
     ];
 
+    /**
+     * Relatie met de Rating
+     */
     public function reviews()
     {
         return $this->hasMany(Rating::class, 'trainingID');
     }
 
+    /**
+     * Berekent de gemiddelde rating
+     */
     public function averageRating()
     {
-        return round($this->reviews()->avg('ratingNumber'), 1);
+        $average = $this->reviews()->avg('ratingNumber');
+        return $average ? round($average, 1) : null; // Geeft null terug als er geen ratings zijn
     }
 
+    /**
+     * Relatie met de User (Eigenaar van de training)
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'userID');
     }
 
+    /**
+     * Relatie met oefeningen
+     */
     public function oefeningen()
     {
         // Return related exercises using the 'oefeningIDs' field

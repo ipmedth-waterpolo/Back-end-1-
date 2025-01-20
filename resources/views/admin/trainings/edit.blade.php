@@ -43,10 +43,10 @@
     </div>
 
     <!-- Ratings -->
-    <div>
+    <!-- <div>
         <label for="ratings">Waardering (optioneel)</label>
         <input type="number" id="ratings" name="ratings" value="{{ old('ratings', $training->ratings) }}" step="0.1" min="0" max="5">
-    </div>
+    </div> -->
 
 <!-- Associated Exercises (Checkboxes) -->
 <div class="checkbox-container">

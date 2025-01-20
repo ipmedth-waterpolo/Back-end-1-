@@ -22,144 +22,185 @@
 
     <!-- Update Form -->
     <form action="{{ route('admin.exercises.update', $exercise->id) }}" method="POST" class="form-update">
-        @csrf
-        @method('PUT')
+    @csrf
+    @method('PUT')
 
-        <div class="form-group">
-            <!-- Name -->
-            <label for="name"><strong>Name:</strong></label>
-            <input type="text" id="name" name="name" value="{{ $exercise->name }}" required class="form-control">
-        </div>
+    <div class="form-group">
+        <!-- Name -->
+        <label for="name"><strong>Name:</strong></label>
+        <input type="text" id="name" name="name" value="{{ $exercise->name }}" required class="form-control">
+    </div>
 
-        <div class="checkbox-container">
-            <!-- Enabled -->
-            <label for="enabled"><strong>Enabled:</strong></label>
-            <input type="checkbox" id="enabled" name="enabled" {{ $exercise->enabled ? 'checked' : '' }} class="form-control-checkbox">
-        </div>
+    <div class="checkbox-container">
+        <!-- Enabled -->
+        <label for="enabled"><strong>Enabled:</strong></label>
+        <input type="hidden" name="enabled" value="0"> <!-- Default value -->
+        <input type="checkbox" id="enabled" name="enabled" value="1" {{ $exercise->enabled ? 'checked' : '' }} class="form-control-checkbox">
+    </div>
 
-        <div class="checkbox-container">
-            <!-- Categorie -->
-            <label><strong>Categories:</strong></label>
-            <div id="category_container">
-                @php
-                    $categories = collect($exercises)->pluck('categorie')->flatten()->unique()->filter()->toArray();
-                @endphp
-                @foreach ($categories as $category)
-                    <label>
-                        <input type="checkbox" name="categorie[]" value="{{ $category }}" 
-                            {{ is_array($exercise->categorie) && in_array($category, $exercise->categorie) ? 'checked' : '' }} class="form-control-checkbox">
-                        {{ $category }}
-                    </label>
-                    <br>
-                @endforeach
-            </div>
-            <input type="text" id="new_category" placeholder="Add new category" class="form-control">
-            <button type="button" onclick="addNewCategory()" class="btn-add">Add Category</button>
-        </div>
-
-        <div class="checkbox-container">
-            <!-- Onderdeel -->
-            <label><strong>Parts:</strong></label>
-            <div id="onderdeel_container">
-                @php
-                    $onderdelen = collect($exercises)->pluck('onderdeel')->flatten()->unique()->filter()->toArray();
-                @endphp
-                @foreach ($onderdelen as $onderdeel)
-                    <label>
-                        <input type="checkbox" name="onderdeel[]" value="{{ $onderdeel }}" 
-                            {{ is_array($exercise->onderdeel) && in_array($onderdeel, $exercise->onderdeel) ? 'checked' : '' }} class="form-control-checkbox">
-                        {{ $onderdeel }}
-                    </label>
-                    <br>
-                @endforeach
-            </div>
-            <input type="text" id="new_onderdeel" placeholder="Add new part" class="form-control">
-            <button type="button" onclick="addNewOnderdeel()" class="btn-add">Add Part</button>
-        </div>
-
-        <div class="checkbox-container">
-            <!-- Leeftijdsgroep -->
-            <label><strong>Age Group:</strong></label>
+    <div class="checkbox-container">
+        <!-- Categorie -->
+        <label><strong>Categories:</strong></label>
+        <div id="category_container">
             @php
-                $allAgeGroups = ['O08', 'O10', 'O12', 'O14', 'O16', 'O18', 'volwassenen'];
+                $categories = collect($exercises)->pluck('categorie')->flatten()->unique()->filter()->toArray();
             @endphp
-            <div>
-                @foreach ($allAgeGroups as $ageGroup)
-                    <label>
-                        <input type="checkbox" name="leeftijdsgroep[]" value="{{ $ageGroup }}" 
-                               {{ in_array($ageGroup, $exercise->leeftijdsgroep ?? []) ? 'checked' : '' }} class="form-control-checkbox">
-                        {{ $ageGroup }}
-                    </label>
-                    <br>
+            @foreach ($categories as $category)
+                <label>
+                    <input type="checkbox" name="categorie[]" value="{{ $category }}" 
+                        {{ is_array($exercise->categorie) && in_array($category, $exercise->categorie) ? 'checked' : '' }} class="form-control-checkbox">
+                    {{ $category }}
+                </label>
+                <br>
+            @endforeach
+        </div>
+        <input type="text" id="new_category" placeholder="Add new category" class="form-control">
+        <button type="button" onclick="addNewCategory()" class="btn-add">Add Category</button>
+    </div>
+
+    <div class="checkbox-container">
+        <!-- Onderdeel -->
+        <label><strong>Parts:</strong></label>
+        <div id="onderdeel_container">
+            @php
+                $onderdelen = collect($exercises)->pluck('onderdeel')->flatten()->unique()->filter()->toArray();
+            @endphp
+            @foreach ($onderdelen as $onderdeel)
+                <label>
+                    <input type="checkbox" name="onderdeel[]" value="{{ $onderdeel }}" 
+                        {{ is_array($exercise->onderdeel) && in_array($onderdeel, $exercise->onderdeel) ? 'checked' : '' }} class="form-control-checkbox">
+                    {{ $onderdeel }}
+                </label>
+                <br>
+            @endforeach
+        </div>
+        <input type="text" id="new_onderdeel" placeholder="Add new part" class="form-control">
+        <button type="button" onclick="addNewOnderdeel()" class="btn-add">Add Part</button>
+    </div>
+
+    <div class="checkbox-container">
+        <!-- Leeftijdsgroep -->
+        <label><strong>Age Group:</strong></label>
+        @php
+            $allAgeGroups = ['O08', 'O10', 'O12', 'O14', 'O16', 'O18', 'volwassenen'];
+        @endphp
+        <div>
+            @foreach ($allAgeGroups as $ageGroup)
+                <label>
+                    <input type="checkbox" name="leeftijdsgroep[]" value="{{ $ageGroup }}" 
+                           {{ in_array($ageGroup, $exercise->leeftijdsgroep ?? []) ? 'checked' : '' }} class="form-control-checkbox">
+                    {{ $ageGroup }}
+                </label>
+                <br>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="form-group">
+        <!-- Duur -->
+        <label for="duur"><strong>Duration (in minutes):</strong></label>
+        <input type="number" id="duur" name="duur" value="{{ $exercise->duur }}" required class="form-control">
+    </div>
+
+    <div class="form-group">
+        <!-- Minimale Aantal Spelers -->
+        <label for="minimum_aantal_spelers"><strong>Minimum Number of Players:</strong></label>
+        <input type="number" id="minimum_aantal_spelers" name="minimum_aantal_spelers" value="{{ $exercise->minimum_aantal_spelers }}" required class="form-control">
+    </div>
+
+    <div class="form-group">
+        <!-- Benodigdheden -->
+        <label for="benodigdheden"><strong>Materials:</strong></label>
+        <div id="benodigdheden_container">
+            @if (is_array($exercise->benodigdheden))
+                @foreach ($exercise->benodigdheden as $benodigdheid)
+                    <div>
+                        <input type="text" name="benodigdheden[]" value="{{ $benodigdheid }}" class="form-control">
+                    </div>
                 @endforeach
-            </div>
+            @else
+                <div>
+                    <input type="text" name="benodigdheden[]" value="{{ $exercise->benodigdheden }}" class="form-control">
+                </div>
+            @endif
         </div>
+        <button type="button" onclick="addField('benodigdheden_container', 'benodigdheden[]')" class="btn-add">Add Material</button>
+    </div>
 
-        <div class="form-group">
-            <!-- Duur -->
-            <label for="duur"><strong>Duration (in minutes):</strong></label>
-            <input type="number" id="duur" name="duur" value="{{ $exercise->duur }}" required class="form-control">
-        </div>
+    <div class="form-group">
+        <!-- Water Nodig -->
+        <label for="water_nodig"><strong>Water Required:</strong></label>
+        <input type="hidden" name="water_nodig" value="0"> <!-- Default value -->
+        <input type="checkbox" id="water_nodig" name="water_nodig" value="1" {{ $exercise->water_nodig ? 'checked' : '' }} class="form-control-checkbox">
+    </div>
 
-        <div class="form-group">
-            <!-- Minimale Aantal Spelers -->
-            <label for="minimum_aantal_spelers"><strong>Minimum Number of Players:</strong></label>
-            <input type="number" id="minimum_aantal_spelers" name="minimum_aantal_spelers" value="{{ $exercise->minimum_aantal_spelers }}" required class="form-control">
-        </div>
+    <div class="form-group">
+        <!-- Omschrijving -->
+        <label for="omschrijving"><strong>Description:</strong></label>
+        <textarea id="omschrijving" name="omschrijving" rows="5" required class="form-control">{{ $exercise->omschrijving }}</textarea>
+    </div>
 
-        <div class="form-group">
-            <!-- Benodigdheden -->
-            <label for="benodigdheden"><strong>Materials:</strong></label>
-            <textarea id="benodigdheden" name="benodigdheden" rows="3" class="form-control">{{ is_array($exercise->benodigdheden) ? implode(', ', $exercise->benodigdheden) : $exercise->benodigdheden }}</textarea>
-        </div>
+    <div class="form-group">
+        <!-- Variatie -->
+        <label for="variatie"><strong>Variation:</strong></label>
+        <textarea id="variatie" name="variatie" rows="3" class="form-control">{{ $exercise->variatie }}</textarea>
+    </div>
 
-        <div class="form-group">
-            <!-- Water Nodig -->
-            <label for="water_nodig"><strong>Water Required:</strong></label>
-            <input type="checkbox" id="water_nodig" name="water_nodig" {{ $exercise->water_nodig ? 'checked' : '' }} class="form-control-checkbox">
-        </div>
+    <div class="form-group">
+        <!-- Source -->
+        <label for="source"><strong>Source:</strong></label>
+        <input type="text" id="source" name="source" value="{{ $exercise->source }}" class="form-control">
+    </div>
 
-        <div class="form-group">
-            <!-- Omschrijving -->
-            <label for="omschrijving"><strong>Description:</strong></label>
-            <textarea id="omschrijving" name="omschrijving" rows="5" required class="form-control">{{ $exercise->omschrijving }}</textarea>
+    <div class="form-group">
+        <!-- Afbeeldingen -->
+        <label for="afbeeldingen"><strong>Images:</strong></label>
+        <div id="afbeeldingen_container">
+            @if (is_array($exercise->afbeeldingen))
+                @foreach ($exercise->afbeeldingen as $afbeelding)
+                    <div>
+                        <input type="text" name="afbeeldingen[]" value="{{ $afbeelding }}" class="form-control">
+                    </div>
+                @endforeach
+            @else
+                <div>
+                    <input type="text" name="afbeeldingen[]" value="{{ $exercise->afbeeldingen }}" class="form-control">
+                </div>
+            @endif
         </div>
+        <button type="button" onclick="addField('afbeeldingen_container', 'afbeeldingen[]')" class="btn-add">Add Image</button>
+    </div>
 
-        <div class="form-group">
-            <!-- Variatie -->
-            <label for="variatie"><strong>Variation:</strong></label>
-            <textarea id="variatie" name="variatie" rows="3" class="form-control">{{ $exercise->variatie }}</textarea>
+    <div class="form-group">
+        <!-- Videos -->
+        <label for="videos"><strong>Videos:</strong></label>
+        <div id="videos_container">
+            @if (is_array($exercise->videos))
+                @foreach ($exercise->videos as $video)
+                    <div>
+                        <input type="text" name="videos[]" value="{{ $video }}" class="form-control">
+                    </div>
+                @endforeach
+            @else
+                <div>
+                    <input type="text" name="videos[]" value="{{ $exercise->videos }}" class="form-control">
+                </div>
+            @endif
         </div>
+        <button type="button" onclick="addField('videos_container', 'videos[]')" class="btn-add">Add Video</button>
+    </div>
 
-        <div class="form-group">
-            <!-- Source -->
-            <label for="source"><strong>Source:</strong></label>
-            <input type="text" id="source" name="source" value="{{ $exercise->source }}" class="form-control">
-        </div>
+    <div class="form-group">
+        <!-- Rating -->
+        <label for="rating"><strong>Rating:</strong></label>
+        <input type="number" id="rating" name="rating" value="{{ $exercise->rating }}" min="0" max="5" step="1" class="form-control">
+    </div>
 
-        <div class="form-group">
-            <!-- Afbeeldingen -->
-            <label for="afbeeldingen"><strong>Images:</strong></label>
-            <textarea id="afbeeldingen" name="afbeeldingen" rows="3" class="form-control">{{ is_array($exercise->afbeeldingen) ? implode(', ', $exercise->afbeeldingen) : $exercise->afbeeldingen }}</textarea>
-        </div>
-
-        <div class="form-group">
-            <!-- Videos -->
-            <label for="videos"><strong>Videos:</strong></label>
-            <textarea id="videos" name="videos" rows="3" class="form-control">{{ is_array($exercise->videos) ? implode(', ', $exercise->videos) : $exercise->videos }}</textarea>
-        </div>
-
-        <div class="form-group">
-            <!-- Rating -->
-            <label for="rating"><strong>Rating:</strong></label>
-            <input type="number" id="rating" name="rating" value="{{ $exercise->rating }}" min="0" max="5" step="1" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <!-- Submit Button -->
-            <button type="submit" class="btn-submit">Update Exercise</button>
-        </div>
-    </form>
+    <div class="form-group">
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">Update Exercise</button>
+    </div>
+</form>
 
     <!-- Delete Form -->
     <form id="deleteForm" action="{{ route('admin.exercises.delete', $exercise->id) }}" method="POST" class="form-delete">
@@ -224,6 +265,18 @@
                 newOnderdeelInput.value = '';
             }
         }
+
+            // Function to dynamically add new fields for a container
+    function addField(containerId, inputName) {
+        const container = document.getElementById(containerId);
+
+        // Create a new input element
+        const newField = document.createElement('div');
+        newField.innerHTML = `<input type="text" name="${inputName}" class="form-control">`;
+
+        // Append the new field to the container
+        container.appendChild(newField);
+    }
 
         function confirmDelete() {
             if (confirm("Are you sure you want to delete this exercise?")) {

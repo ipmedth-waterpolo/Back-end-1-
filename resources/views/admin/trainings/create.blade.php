@@ -42,10 +42,10 @@
     </div>
 
     <!-- Beoordeling -->
-    <div>
+    <!-- <div>
         <label for="ratings">Beoordeling (optioneel)</label>
         <input type="number" id="ratings" name="ratings" value="{{ old('ratings') }}" step="0.1" min="0" max="5">
-    </div>
+    </div> -->
 
     <!-- Gerelateerde Oefeningen (Checkboxen) -->
     <div class="checkbox-container">

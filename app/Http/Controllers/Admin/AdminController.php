@@ -66,21 +66,33 @@ class AdminController extends Controller
     public function updateUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
+    
+        // Validatie
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|unique:users,email,' . $user->id,
             'role' => 'sometimes|string',
         ]);
-
-        if (isset($validated['password'])) {
-            $validated['password'] = bcrypt($validated['password']);
+    
+        // Controleer of de huidige gebruiker een 'onderhoud' is en rol-updates probeert te doen
+        if (Auth::user()->role === 'onderhoud' && isset($validated['role'])) {
+            if (in_array($validated['role'], ['admin', 'onderhoud'])) {
+                return redirect()->back()->withErrors([
+                    'role' => 'Je mag de rol van deze gebruiker niet instellen op admin of onderhoud.'
+                ]);
+            }
         }
-
+    
+        // Verwerk wachtwoord, indien aanwezig
+        if ($request->filled('password')) {
+            $validated['password'] = bcrypt($request->password);
+        }
+    
+        // Update de gebruiker
         $user->update($validated);
-
+    
         return redirect()->route('admin.users', $user->id)->with('success', 'Gebruiker succesvol bijgewerkt!');
-    }
+    }    
 
     public function deleteUser($id)
     {

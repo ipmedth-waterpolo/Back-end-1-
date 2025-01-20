@@ -20,7 +20,7 @@
     <p><strong>Omschrijving:</strong> {{ $training->beschrijving }}</p>
     <p><strong>Totale duur:</strong> {{ $training->totale_duur }} minutes</p>
     <p><strong>Beschikbaar:</strong> {{ $training->enabled ? 'Yes' : 'No' }}</p>
-    <p><strong>Waardering:</strong> {{ $training->ratings ? $training->ratings : 'Not Rated' }}</p>
+    <!-- <p><strong>Waardering:</strong> {{ $training->ratings ? $training->ratings : 'Not Rated' }}</p> -->
 
     <!-- Associated Exercises -->
     <h2>Exercises</h2>
