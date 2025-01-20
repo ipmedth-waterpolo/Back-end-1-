@@ -62,7 +62,7 @@ Route::middleware(['validate_api_key', 'auth:sanctum'])->prefix('user')->group(f
 });
 
 // Routes voor gebruikersbeheer (Admins en Onderhoud)
-Route::middleware(['validate_api_key', 'auth:sanctum', 'role:onderhoud,admin'])->prefix('user')->group(function () {
+Route::middleware(['validate_api_key', 'auth:sanctum', 'role:onderhoud,admin'])->prefix('users')->group(function () {
     Route::get('/{id}', [AuthController::class, 'getAnyUserInfo']);
     Route::put('/{id}', [AuthController::class, 'updateAnyUser']);
     Route::delete('/{id}', [AuthController::class, 'deleteAnyUser']);
