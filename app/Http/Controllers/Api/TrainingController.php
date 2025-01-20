@@ -41,20 +41,20 @@ class TrainingController extends Controller
     {
         // Haal alle trainingen op
         $trainings = Training::all();
-    
+
         // Voeg gemiddelde rating toe aan elke training
         foreach ($trainings as $training) {
             // Haal de ratings op voor deze training en bereken het gemiddelde
             $averageRating = Rating::where('trainingID', $training->id)->avg('ratingNumber');
-            
+
             // Zet het gemiddelde rating als een nieuwe sleutel in de training
             $training->average_rating = $averageRating ? round($averageRating, 1) : null;  // Null if no rating
         }
-    
+
         return response()->json([
             'success' => true,
             'data' => [
-                'trainings' => $trainings,
+                'training' => $trainings,
             ],
         ], 200);
     }
@@ -70,7 +70,7 @@ class TrainingController extends Controller
         if (is_string($oefeningIDs)) {
             // Decodeer JSON en controleer op fouten
             $decoded = json_decode($oefeningIDs, true);
-            
+
             if (json_last_error() === JSON_ERROR_NONE) {
                 $oefeningIDs = $decoded;
             } else {
@@ -114,20 +114,20 @@ class TrainingController extends Controller
         $validated = $request->validate([
             'ratingNumber' => 'required|integer|min:1|max:5',
         ]);
-    
+
         // Controleer of de training bestaat
         $training = Training::findOrFail($trainingID);
-    
+
         // Controleer of de gebruiker al een beoordeling heeft gegeven voor deze training
         $existingRating = Rating::where('trainingID', $trainingID)
                                 ->where('userID', Auth::id())
                                 ->first();
-    
+
         if ($existingRating) {
             // Als de gebruiker al een rating heeft, werk de rating bij
             $existingRating->ratingNumber = $validated['ratingNumber'];
             $existingRating->save();
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Rating updated successfully!',
@@ -140,7 +140,7 @@ class TrainingController extends Controller
                 'userID' => Auth::id(),
                 'trainingID' => $trainingID,
             ]);
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Rating added successfully!',
