@@ -18,6 +18,7 @@ class Training extends Model
         'oefeningIDs',
         'userID',
         'enabled',
+        'ratings',
     ];
 
     // Zorg ervoor dat oefeningIDs automatisch als array worden behandeld
@@ -32,16 +33,6 @@ class Training extends Model
     {
         return $this->hasMany(Rating::class, 'trainingID');
     }
-
-    /**
-     * Berekent de gemiddelde rating
-     */
-    public function averageRating()
-    {
-        $average = $this->reviews()->avg('ratingNumber');
-        return $average ? round($average, 1) : null; // Geeft null terug als er geen ratings zijn
-    }
-
     /**
      * Relatie met de User (Eigenaar van de training)
      */

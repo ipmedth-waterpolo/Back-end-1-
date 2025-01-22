@@ -42,15 +42,6 @@ class TrainingController extends Controller
         // Haal alle trainingen op
         $trainings = Training::all();
 
-        // Voeg gemiddelde rating toe aan elke training
-        foreach ($trainings as $training) {
-            // Haal de ratings op voor deze training en bereken het gemiddelde
-            $averageRating = Rating::where('trainingID', $training->id)->avg('ratingNumber');
-
-            // Zet het gemiddelde rating als een nieuwe sleutel in de training
-            $training->average_rating = $averageRating ? round($averageRating, 1) : null;  // Null if no rating
-        }
-
         return response()->json([
             'success' => true,
             'data' => [
@@ -127,6 +118,9 @@ class TrainingController extends Controller
             // Als de gebruiker al een rating heeft, werk de rating bij
             $existingRating->ratingNumber = $validated['ratingNumber'];
             $existingRating->save();
+            $average_rating = Rating::where('trainingID', $trainingID)->avg('ratingNumber');
+            $training->ratings = $average_rating ? round($average_rating, 1) : null;
+            $training->save();
 
             return response()->json([
                 'success' => true,
@@ -140,6 +134,10 @@ class TrainingController extends Controller
                 'userID' => Auth::id(),
                 'trainingID' => $trainingID,
             ]);
+
+            $average_rating = Rating::where('trainingID', $trainingID)->avg('ratingNumber');
+            $training->ratings = $average_rating ? round($average_rating, 1) : null;
+            $training->save();
 
             return response()->json([
                 'success' => true,
