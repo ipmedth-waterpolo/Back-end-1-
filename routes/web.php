@@ -5,11 +5,11 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\ophalenOefeningen;
 use Illuminate\Support\Facades\Route;
 
-// Public route to fetch exercises
-Route::get('/', [ophalenOefeningen::class, 'index']);
-
 // Authentication Routes
 Route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.login');
+    });
     Route::get('/login', [AuthController::class, 'showAdminLoginForm'])->name('admin.login');
     Route::post('/login', [AuthController::class, 'adminLogin']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
