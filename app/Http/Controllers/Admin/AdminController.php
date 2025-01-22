@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Password; // For password reset functionality
 use App\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -429,4 +431,49 @@ class AdminController extends Controller
 
         return back()->with('success', 'Wachtwoord reset link is verzonden.');
     }
+
+    public function showResetForm($token)
+    {
+        // Optioneel: Voeg de mogelijkheid toe om een e-mail of andere gegevens door te geven
+        return view('admin.password_reset', [
+            'token' => $token,
+            // 'email' => $request->email, // Je kunt dit toevoegen als de view een email vereist.
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|confirmed|min:8',
+    ]);
+
+    // Zoek het wachtwoord-reset record
+    $reset = DB::table('password_resets')
+        ->where('email', $request->email)
+        ->where('token', $request->token)
+        ->first();
+
+    if (!$reset) {
+        return redirect()->back()->withErrors(['email' => 'Deze reset-link is ongeldig of verlopen.']);
+    }
+
+    // Update het wachtwoord van de gebruiker
+    $user = User::where('email', $request->email)->first();
+    if (!$user) {
+        return redirect()->back()->withErrors(['email' => 'Geen gebruiker gevonden met dit e-mailadres.']);
+    }
+
+    $user->update([
+        'password' => Hash::make($request->password),
+    ]);
+
+    // Verwijder het reset-record na gebruik
+    DB::table('password_resets')->where('email', $request->email)->delete();
+
+    // Redirect of login de gebruiker na reset
+    return redirect()->route('login')->with('status', 'Je wachtwoord is succesvol bijgewerkt.');
+}
+
 }

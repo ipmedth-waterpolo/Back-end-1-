@@ -58,3 +58,4 @@ Route::middleware(['auth', 'role:admin,onderhoud'])->prefix('admin')->group(func
 });
 
 Route::get('password/reset/{token}', [AdminController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [AdminController::class, 'updatePassword'])->name('password.update');
