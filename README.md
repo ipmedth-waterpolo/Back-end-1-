@@ -1,68 +1,170 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Uitstekend! Ik zal de README-updates verwerken om de specifieke configuratie-instellingen van je `.env` bestand te reflecteren, zoals de database-instellingen, sessie-instellingen en API-sleutels. Hier is de aangepaste **README** met deze details:
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+# Waterpolo Planner Backend
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Dit project bevat de backend voor de **Waterpolo Planner**, een webapplicatie die is ontworpen om waterpolotrainers te helpen bij het snel en efficiënt plannen van trainingen. De backend is gebouwd met **Laravel** en biedt een robuuste API voor de frontend van de applicatie om mee te communiceren.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Inhoudsopgave
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. [Installatie](#installatie)
+2. [Gebruik](#gebruik)
+3. [API Endpoints](#api-endpoints)
+4. [Technische Specificaties](#technische-specificaties)
+5. [Bijdragen](#bijdragen)
+6. [Licentie](#licentie)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installatie
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Volg de onderstaande stappen om de backend op je lokale machine in te stellen.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Clone het project
 
-## Laravel Sponsors
+Clone het repository naar je lokale machine:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/ipmedth-waterpolo/Back-end-1.git
+```
 
-### Premium Partners
+### 2. Installeer de afhankelijkheden
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Navigeer naar de projectmap en installeer de PHP-afhankelijkheden via Composer:
 
-## Contributing
+```bash
+cd Back-end-1
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Kopieer de voorbeeld `.env` bestand
 
-## Code of Conduct
+Maak een kopie van het voorbeeld `.env` bestand en pas de instellingen aan je lokale omgeving aan:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+### 4. Genereer de applicatiesleutel
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Genereer een nieuwe applicatiesleutel voor je Laravel-applicatie:
 
-## License
+```bash
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Waterpoloplanner
-# Waterpoloplanner
+### 5. Database configureren
+
+Stel de juiste databaseverbinding in je `.env` bestand in. In jouw geval wordt een **SQLite** database gebruikt:
+
+```dotenv
+DB_CONNECTION=sqlite
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=F:/ProgrameerTalen/Laravel/WaterPoloPlannerDB/database/database.sqlite
+DB_USERNAME=root
+DB_PASSWORD=password
+```
+
+Zorg ervoor dat het pad naar je `database.sqlite` bestand correct is ingesteld.
+
+### 6. Voer de database migraties uit
+
+Voer de migraties uit om de benodigde tabellen te maken:
+
+```bash
+php artisan migrate:refresh --seed
+```
+
+### 7. Start de server
+
+Start de lokale ontwikkelingsserver:
+
+```bash
+php artisan serve
+```
+
+De backend draait nu op `http://127.0.0.1:8000`.
+
+---
+
+## Gebruik
+
+De backend biedt verschillende API-endpoints waarmee de frontend kan communiceren. Zie de sectie [API Endpoints](#api-endpoints) voor meer informatie over de beschikbare endpoints.
+
+### Voorbeeld API-aanroepen
+
+- **GET /api/exercises**: Haal een lijst op van alle oefeningen.
+- **POST /api/trainings**: Maak een nieuwe training aan.
+- **GET /api/trainings/{id}**: Haal de details van een specifieke training op.
+
+check de routes/API.php voor alle routes
+---
+
+## Technische Specificaties
+
+- **Framework**: Laravel 8.x
+- **Database**: SQLite
+- **API**: RESTful API
+- **Authenticatie**: JWT (JSON Web Tokens) voor beveiligde API-aanroepen
+- **Pakketten**:
+  - `laravel/sanctum` voor authenticatie
+  - `guzzlehttp/guzzle` voor externe API-aanroepen
+  - `fideloper/proxy` voor het ondersteunen van het gebruik van een reverse proxy in productie
+
+### Omgevingsinstellingen
+
+De volgende instellingen zijn geconfigureerd in je `.env` bestand:
+
+```dotenv
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:TrJeEvZwrX5Q44HUMLEZNI/YSKnW2qnprGUSGtBaHPY=
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+APP_URL=http://localhost
+
+DB_CONNECTION=sqlite
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=F:/ProgrameerTalen/Laravel/WaterPoloPlannerDB/database/database.sqlite
+DB_USERNAME=root
+DB_PASSWORD=password
+
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+CACHE_STORE=database
+CACHE_PREFIX=
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=log
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+API_KEY=Safe_Key
+```
+
+Zorg ervoor dat je **`API_KEY`** correct is ingesteld en gebruik deze voor beveiligde API-aanroepen.
+
+---
+
+## Bijdragen
+
+Dit is gemaakt door studenten aan de Hogeschool Leiden
+Mark van Muijen 
+Billie Bakker 
+Annick Vink 
+Lars Wajer 
